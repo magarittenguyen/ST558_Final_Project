@@ -9,27 +9,37 @@
 #https://www.kaggle.com/datasets/kingabzpro/cosmetics-datasets/code?resource=download
 
 #check library
-getwd()
-setwd("D:/ST558/Final Project")
+#getwd()
+#setwd("D:/ST558/Final Project/Final_Project/ST558_Final_Project")
 
 #libraries
 library(tidyverse)
 library(corrplot)
 library(ggplot2)
+library(caret)
 
 #read in cosmetic data
 #https://www.kaggle.com/datasets/kingabzpro/cosmetics-datasets/code?resource=download
 cosmetics0 <- read_csv("cosmetics.csv")
 
 #create factors
+#name is too unique so remove
+#create var for main_ingredient -- 355... not too useful 
 cosmetics <- cosmetics0 %>%
-             mutate(combination_fctr = factor(Combination, c(0, 1), labels = c("No", "Yes")), 
+             mutate(# type of skin -- factors for each
+                    combination_fctr = factor(Combination, c(0, 1), labels = c("No", "Yes")), 
                     dry_fctr = factor(Dry, c(0, 1), labels = c("No", "Yes")), 
                     normal_fctr = factor(Normal, c(0, 1), labels = c("No", "Yes")), 
                     oily_fctr = factor(Oily, c(0, 1), labels = c("No", "Yes")), 
-                    sensitive_fctr = factor(Sensitive, c(0,1), labels = c("No", "Yes")) 
+                    sensitive_fctr = factor(Sensitive, c(0,1), labels = c("No", "Yes")), 
+                    #type of products - label -- factors
+                    label_fctr = factor(Label),
+                    #brand of product
+                    brand_fctr = factor(Brand)
                     ) %>% #end of the mutate() function 
-             select (! c("Combination", "Dry", "Normal", "Oily", "Sensitive") )
+             separate (Ingredients, c("main_ingredient", NA), ",", remove =FALSE, extra = "merge",
+                       fill = "right") %>%
+             select (! c("Combination", "Dry", "Normal", "Oily", "Sensitive", "Name") )
 
 
 #A quick summary of different variables is as shown below:
@@ -333,7 +343,7 @@ summary(MLR)
 #predicting on the ChannelTest data with linear regression model 1
 test_pred_MLR <- predict(MLR, newdata = CosmeticsTest)
 
-#best model chosen - RMSE reported explicitly
+#best model chosen - RMSE reported explicitly0.
 #goal is to compare RMSE and see which one is the lowest!
 m1 <- postResample(test_pred_MLR, CosmeticsTest$Price)
 #output object m1
@@ -349,10 +359,11 @@ m1
 #Results show that the most optimal model using the largest value for Accuracy (0.7909216) is the model where cp = 0.006 -- this is our final model.
 
 #Basic Tree Fit - Notes 3 Slide 199
-install.packages("tree")
+#install.packages("tree")
 library(tree) #rpart is also often used
 #suppressWarnings(as.numeric(vectr)) 
-treeFit <- tree(Price ~ . , data = CosmeticsTrain)
+
+treeFit <- tree(Price ~ Rank + label_fctr + combination_fctr+ sensitive_fctr , data = CosmeticsTrain)
 plot(treeFit)
 text(treeFit) #first optimal split is 4.85
 
@@ -364,21 +375,20 @@ plot(cvTree$size ,cvTree$dev ,type="b")
 
 trctrl <- trainControl(method = "repeatedcv", number = 5, repeats = 3)
 #Predictions using predict
-pred <- predict(treeFit, newdata = dplyr::select(diamondsTest, -price))
+pred <- predict(treeFit, newdata = dplyr::select(CosmeticsTest, -Price))
 #Root MSE
-sqrt(mean((pred-diamondsTest$price)^2))
+TR_RMSE <- sqrt(mean((pred-CosmeticsTest$Price)^2))
 
 
+#set.seed(3333)
 
-set.seed(3333)
-
-classification_tree_fit <- train(HeartDisease_fctr ~ ., 
-                                 data = heartTrain, 
-                                 method = "rpart",
-                                 trControl=trctrl,
-                                 preProcess = c("center", "scale"),
-                                 tuneGrid = data.frame(cp=seq(0, 0.1, 0.001)) )
-classification_tree_fit
+#classification_tree_fit <- train(Price ~ Rank + label_fctr + combination_fctr+ sensitive_fctr, 
+#                                 data = CosmeticsTrain, 
+#                                 method = "rpart",
+#                                 trControl=trctrl,
+#                                 preProcess = c("center", "scale"),
+#                                 tuneGrid = data.frame(cp=seq(0, 400, 10)) )
+#classification_tree_fit
 
 #Accuracy was used to select the optimal model using the largest value. The final value used for the model was cp = 0.006.
 
@@ -428,6 +438,24 @@ m3
 #As for the R2 value we have (R-squared), this is a metric that indicates the proportion of the variance in the response variable of a regression model that can be explained by the predictor variables. The higher the R2 value, the better a model fits a dataset. This value ranges from 0 to 1.
 
 #It should be noted that our best model is selected from a model that has results reflecting the lowest RMSE and the highest R2 value. But, there are times when the results from the lowest RMSE and highest R2 are not from the same model; therefore, we will use RMSE to pick our final winner.
+
+
+# Comaprison
+
+#The `postResample()` function was used to calculate useful statistics such as RMSE and R squared values for each one of the four models. We summarize them in the tibble below.
+
+#creating tibble with RMSE and R-squared values
+MLR <- tibble(model = c("Multiple Linear Regression"), RMSE = c(m1[[1]]), R2 = c(m1[[2]]))
+
+RT <- tibble(model = c("Regression Tree"), RMSE = c(TR_RMSE), R2 = NA )
+
+RF <- tibble(model = c("Random Forest"), RMSE = c(m3[[1]]), R2 = c(m3[[2]]))
+
+
+
+#creating tibble for all results for the 4 models
+RMSE_table <- rbind(MLR, RT, RF)
+RMSE_table
 
 
 #pick the smallest RMSE for the best model
