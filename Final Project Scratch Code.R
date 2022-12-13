@@ -2,8 +2,8 @@
 # Name: Magaritte Nguyen
 # Date: 01DEC2022
 # Class: ST 558 (601) Fall 2022 Data Science for Statisticians  
-# Assignment: Final Project
-# File: Final Project Scratch Code
+# Assignment: Final Project - Creating a Shiny App
+# File: Final Project Scratch Code.R
 #######################################################
 
 #https://www.kaggle.com/datasets/kingabzpro/cosmetics-datasets/code?resource=download
@@ -39,7 +39,8 @@ cosmetics <- cosmetics0 %>%
                     ) %>% #end of the mutate() function 
              separate (Ingredients, c("main_ingredient", NA), ",", remove =FALSE, extra = "merge",
                        fill = "right") %>%
-             select (! c("Combination", "Dry", "Normal", "Oily", "Sensitive", "Name") )
+             select (! c("Combination", "Dry", "Normal", "Oily", "Sensitive", "Name") ) %>%
+             na.omit()
 
 
 #A quick summary of different variables is as shown below:
@@ -373,6 +374,7 @@ m1
 library(tree) #rpart is also often used
 #suppressWarnings(as.numeric(vectr)) 
 
+#factor predictors must have at most 32 levels
 treeFit <- tree(Price ~ Rank + label_fctr + combination_fctr+ sensitive_fctr , data = CosmeticsTrain)
 plot(treeFit)
 text(treeFit) #first optimal split is 4.85

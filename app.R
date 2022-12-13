@@ -2,7 +2,7 @@
 # Name: Magaritte Nguyen
 # Date: 9DEC2022
 # Class: ST 558 (601) Fall 2022 Data Science for Statisticians  
-# Assignment: Final Project - app file
+# Assignment: Final Project - Creating a Shiny App - Cosmetics App
 # File: app.R
 #######################################################
 
@@ -11,14 +11,18 @@
 #https://www.kaggle.com/datasets/kingabzpro/cosmetics-datasets/code?resource=download
 
 #libraries
+library(shiny)
+library(shinydashboard)
+
 library(tidyverse)
 library(corrplot)
 library(ggplot2)
 library(caret)
 library(DT)
 
-library(shiny)
-library(shinydashboard)
+library(tree)
+library(randomForest)
+
 
 #read in cosmetic data
 #https://www.kaggle.com/datasets/kingabzpro/cosmetics-datasets/code?resource=download
@@ -43,25 +47,32 @@ cosmetics0 <- read_csv("cosmetics.csv")
     ) %>% #end of the mutate() function 
     separate (Ingredients, c("main_ingredient", NA), ",", remove =FALSE, extra = "merge",
               fill = "right") %>%
-    select (! c("Combination", "Dry", "Normal", "Oily", "Sensitive", "Name") )
+    select (! c("Combination", "Dry", "Normal", "Oily", "Sensitive", "Name") ) %>%
+    #removing outliers -- i don't see any in the data first off, but dong for good measure
+    na.omit()
   
 
-####################################### UI ################################################
-#https://fontawesome.com/search?q=info&o=r
+####################################### UI #####################################
+  
 ui <- dashboardPage(
   skin="blue",
   
   
   #add title
-  dashboardHeader(title="Magaritte Nguyen - STT558 - Final Project - Cosmetics Datasets",
+  dashboardHeader(title="Cosmetics App",
                   titleWidth=1000),
   
   #define sidebar items
   dashboardSidebar(
+    
+  ################################### sidebar menu ############################  
+  
+  #use to find icons
+  #https://fontawesome.com/search?q=info&o=r
     sidebarMenu( id = "sidebarmenu",
                  #first menu item
                  #The About Page
-                 menuItem("About", tabName = "about", icon = icon("box-archive")),
+                 menuItem("About", tabName = "about", icon = icon("house")),
                  #second menu item
                  #The Data Exploration Page
                  menuItem("Data Exploration", tabName = "data-exploration", 
@@ -83,16 +94,19 @@ ui <- dashboardPage(
                           ## need to find out how to sub tab -- Prediction tab
                           menuSubItem ( "Prediction", 
                                         tabName = "prediction", 
-                                        icon = icon("check"))
+                                        icon = icon("magnifying-glass"))
                  ), #end of menuItem
                  #Data Page
                  menuItem("Data", tabName = "data", icon = icon("laptop"))
     )),
+
+  ################################### dashboard body ###########################
   
   #define the body of the app
   dashboardBody(
+    #many tab items...
     tabItems(
-      # First tab content -  An About page.
+      ########## First tab content -  An About page.
       tabItem(tabName = "about", 
               
               h4(
@@ -106,54 +120,83 @@ ui <- dashboardPage(
                 "."
               ),
               
+              br(), 
+              
               fluidRow(
-                #add in latex functionality if needed
-                withMathJax(),
-                
                 #Include a picture related to the data 
                 #added its own column...
                 column(6,
-                       tags$img(src='huda_beauty_product_spread.jpg', 
-                                width='550px',height='400px')),
+                       tags$img(src='makeup2.jpg', 
+                                width='1250px',height='400px')),
                 # an image downloaded from web (b.jpg under www folder)
                 
                 
                 #img(src='huda beauty product spread.png', align = "right")),
+              ),
+              
+              fluidRow(
+                #add in latex functionality if needed
+                withMathJax(),
                 
                 #two columns for each of the two items
                 column(6,
                        # Describe the purpose of the app
-                       h1("What does this app do?"),
+                       h1("Purpose of The App"),
                        #box to contain description
-                       box(background="blue",width=12,
-                           h4("This application shows the relationship between the prior distribution and the posterior distribution for a simple Bayesian model."),
-                           h4("The prior distribution is assumed to be a Beta distribution and the likelihood is a Binomial distribution with 30 trials (of which you can change the number of successes).  This yields a Beta distribution as the posterior. Note: As the prior distribution is in the same family as the posterior, we say the prior is conjugate for the likelihood."),
-                           h4("This application corresponds to an example in ",span("Mathematical Statistics and Data Analysis",style = "font-style:italic"), "section 3.5, example E, by John Rice."),
-                           h4("The goal of the example is to update our belief about the parameter \\(\\Theta\\) = the probability of obtaining a head when a particular coin is flipped.  The experiment is to flip the coin 30 times and observe the number of heads. The likelihood is then a binomial distribution. The prior is assumed to be a Beta distribution.")
+                       box(background="purple",width=12,
+                           
+                           h4("This app is meant to predict the price of a product based on certian factor specified by the user. The reason for this is because when chosing a new cosmeic product to try can be very daunting. Not only are you gambling on something that might cost you a lot of money and it might not work, but you might also be taking a chance on your complection being ruined due to an allergic reaction or buying a product that is not compatible with your skin type. This app will aid in the selection of a product that will fit your budget, or atleast let you know how much you should expect to spend, with all the specs you're looking for."),
+                           
+                           h4("The app has several features, which allows the user to select certain varibles, subset the data, and do some data exploration. The app also allows the user to create numerical and graphical summmaries, as well as create different predictive models with the data provided. The predictive models used in this app will be (i) multiple linear regression, (ii) regression tree, and (iii) random forest. For the predictive models, the response variable of interest is Price, and the other explanitory variables from the data set will be used to predict the price of the cosmetic product."), 
+                           
+                           h4("Finally, we will compare these three models to see, which model has the best predicitive ability. This is assessed by the model with the lowest root mean squared error (RMSE)."),
+                           
+                           br(), #break
+                           
+                           h4("Below is the purpose of each tab/page in the app."), 
+                           
+                           h4("[The About Page]: This page describes the purpose of the app, some information about the data and its source (links to the dataset and additional information), a summary of what each tab/page contains, and it also includes a picture that is related to the data."),
+                           
+                           h4("[The Data Exploration Page]: This page allows users to filter and select certain variables in the data from a dropdown menu, radio buttons, and enter in free text in order to creates numerical and graphical summaries. Users can also play around with the various types of plots available (changes the type of plot shown) and the type of summary reported. Lastly, users can change the variables and filter the rows to change the data used in the plots/summaries. The page is meant to make it easy for users to explore and better understand the data available in the app."),
+                           
+                           h4("[The Modeling Page]: This page fits the three supervised learning models by offering a range of tools. These models are (i) multiple linear regression, (ii) regression tree, and (iii) random forest. 
+                           
+                           The Model Info Tab is a sub tabs that provide in depth information about each model, the pros and cons of each model, and some mathematical expression. 
+                           
+                           The Model Fitting Tab allows the user to also be able to pick how they would like to split their training and test data set, select what explanitory variables that they would like to include in their model, fit the models, and compare the models.
+                           
+                           The Prediction Tab allows the user to to selects the which model predicts the best. 
+"),
+                           
+                           h4("[The Data Page]: This page allows for scrolling through the data set, subsetting this data set (rows and columns), and saving the (possibly subsetted) data as a .csv file.")
                        )  #end of box() function -- line 65
                 ), #end of column() function -- line 61
                 
                 column(6,
-                       #How to use the app
-                       h1("How to use the app?"),
+                       #Data Details
+                       h1("About The Data"),
                        #box to contain description
-                       box(background="blue",width=12,
-                           h4("The controls for the app are located to the left and the visualizations are available on the right."),
-                           h4("To change the number of successes observed (for example the number of coins landing head side up), the slider on the top left can be used."),
-                           h4("To change the prior distribution, the hyperparameters can be set using the input boxes on the left.  The changes in this distribution can be seen on the first graph."),
-                           h4("The resulting changes to the posterior distribution can be seen on the second graph.")
+                       box(background="purple",width=12,
+                           h4("This app uses data from a website called Kaggle, which is described as 'Your Machine Learning and Data Science Community'. It offers a no-setup, customizable, Jupyter Notebooks environment and access GPUs at no cost to you and a huge repository of community published data. For our purposes, I downloaded a data set called *cosmetics.csv*, which can be found", a(href = "https://www.kaggle.com/datasets/kingabzpro/cosmetics-datasets", "here"), " -- on the top right corner. This data set includes data from", a(href = "https://en.wikipedia.org/wiki/Sephora", "Sephora"), " and contains variables such as the type of cosmetic category, brand, product name, an ingredients list, rating, price, and the category of skin that these products are meant for (combinaiton, dry, normal, oily, sensitive)."),
+                           
+                           br(),
+                           
+                           h4(""),
+                           
+                           h4(""),
+                           
+                           h4("")
+                           
                        ) #end of box() function
                 ) #end of column() function 
               ) #end of fluidRow() function -- line 57
       ), #end of tabItem() function 
       
-      
-      
-      
-      
-      #Second tab content
+
+      ########## Second tab content
       #actual app layout      
       tabItem(tabName = "data-exploration",
+              
               fluidRow( #summary of all vars - options 
                 #also var i created in the data available
                 box(width=12,background="blue",
@@ -394,6 +437,7 @@ ui <- dashboardPage(
 ) # end of the dashboardPage() function
 
 ####################################### SERVER ################################################
+  
 # Define server logic required to draw the plots
 server <- shinyServer(function(input, output, session) {
   
@@ -632,10 +676,17 @@ server <- shinyServer(function(input, output, session) {
   
 }) # end of the server function 
 
+# Create Shiny Object
 shinyApp(ui = ui, server = server)
 
-#must run inthe colsole
-#shiny::runGitHub("ST558_Final_Project","magarittenguyen")
+#downloading // installing packages all in one...
+#install.packages( c("shiny", "shinydashboard", "tidyverse", "corrplot", "ggplot2", "caret", "DT", "tree", "randomForest" ) )
 
+#must run in the colsole
+#can only be ran after you commit; otherwise, use the run app button on the top right
+#shiny::runGitHub("ST558_Final_Project","magarittenguyen")
+#shiny::runGitHub(repo="ST558_Final_Project",username="magarittenguyen")
+
+#repo link
 #https://github.com/magarittenguyen/ST558_Final_Project
 
