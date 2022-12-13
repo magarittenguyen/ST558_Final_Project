@@ -57,7 +57,7 @@ install.packages(c("shiny", "shinydashboard",
 
 <!-- Shiny App Run Code -->
 
-# Shiny App Run Code:
+# Shiny App Run Code
 
 The following code is required to run and output the Shiny App. This can be run in the R Console after a Commit to GitHub.
 
