@@ -22,7 +22,7 @@ library(shinydashboard)
 
 #read in cosmetic data
 #https://www.kaggle.com/datasets/kingabzpro/cosmetics-datasets/code?resource=download
-cosmetics0 <- read_csv("cosmetics.csv")
+cosmetics <- read_csv("cosmetics.csv")
 
 ####################################### UI ################################################
 #https://fontawesome.com/search?q=info&o=r
@@ -641,7 +641,7 @@ server <- shinyServer(function(input, output, session) {
 shinyApp(ui = ui, server = server)
 
 #must run inthe colsole
-shiny::runGitHub("ST558_Final_Project","magarittenguyen")
+#shiny::runGitHub("ST558_Final_Project","magarittenguyen")
 
 #https://github.com/magarittenguyen/ST558_Final_Project
 
