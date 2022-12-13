@@ -5,7 +5,7 @@ Magaritte Nguyen
 
 <!-- In the repo’s README.md file (which doesn’t need to be created from a .Rmd file, just use the one you initialize into the repo if you want) give a brief description of the purpose of the repo, a list of R packages used, links to the generated analyses, and the code used to create the analyses from a single .Rmd file (i.e. the render() code). -->
 
-The purpose of this repository is for the collaborative efforts of Group F (Members: Magaritte Nguyen and Matthew Sookoo) on the NC State ST558 Project 3, Fall 2022. Here, we will be reading in data pertaining to Mashable article sharing informatoin collected over the past 2 year. We will then create a summary report based on 4 different models (MLR model #1, MLR model #2, Random Forest, and Boosting) to be able to see which model has the best prediciton ability for sharing articles for 6 different channels. These channels cover topics like Lifestlye, Entertaiment, Business, Social Media, Tech, and World. 
+The purpose of this repository is for the efforts of Magaritte Nguyen on the NC State ST558 Final Project, Fall 2022. Here, we will be reading in data pertaining to Mashable article sharing informatoin collected over the past 2 year. We will then create a summary report based on 4 different models (MLR model #1, MLR model #2, Random Forest, and Boosting) to be able to see which model has the best prediciton ability for sharing articles for 6 different channels. These channels cover topics like Lifestlye, Entertaiment, Business, Social Media, Tech, and World. 
 
 Please see below for more information.
 
@@ -15,12 +15,10 @@ Please see below for more information.
 
 -   <a href="#table-of-contents" id="toc-table-of-contents">Table of Contents</a>
 -   <a href="#introduction" id="toc-introduction">Introduction</a>
--   <a href="#required-packages" id="toc-required-packages">Required
-    Packages</a>
--   <a href="#summary-reports" id="toc-summary-reports">Summary Reports</a> 
--   <a href="#our-render-code" id="toc-our-render-code">Our Render Code</a> 
+-   <a href="#required-packages" id="toc-required-packages">Required Packages</a>
+-   <a href="#shiny-app-run-code" id="toc-shiny-app-run-code">Shiny App Run Code</a> 
 
-<!-- setup -->
+<!-- Introduction -->
 
 # Introduction 
 
@@ -34,36 +32,36 @@ forest model, and a boosting model. Lastly we will compare the four models and d
 
 The dataset we will be using is [Online News Popularity Data Set](https://archive.ics.uci.edu/ml/datasets/Online+News+Popularity).
 
+<!-- Required Packages -->
+
 # Required Packages
 
 The following packages are used for our data manipulation, prediction, etc.:
 
-* `tidyverse`: Tons of useful features for data manipulation and visualization!
-* `caret`    : Used for predictive modelling.
-* `shiny`    : makes it easy to build interactive web apps straight from R
-* `rmarkdown`: create dynamic analysis documents that combine codes and rendered output
-* `corrplot` : provides a visual exploratory tool on correlation matrix
+* `shiny`          : makes it easy to build interactive web apps straight from R.
+* `shinydashboard` : makes it easy to use Shiny to create dashboards.
+* `tidyverse`      : Tons of useful features for data manipulation and visualization!
+* `corrplot`       : provides a visual exploratory tool on correlation matrix.
+* `ggplot2`        : is a system for declaratively creating graphics, based on The Grammar of Graphics.
+* `caret`          : used for predictive modelling.
+* `DT`             : provides an R interface to the JavaScript library DataTables.
+* `tree`           : is a package specifically designed to work with the decision trees.
+* `randomForest`   : can be used for classification and regression. <!-- might remove -->
 
-<!-- 6 Links for the Rendered Files -->
+The following code will install the above packages. This can be run in the R Console.
 
-# Summary Reports
+#install packages
+install.packages(c("shiny", "shinydashboard", 
+                   "tidyverse", "corrplot", "ggplot2", "caret", "DT", 
+                   "tree", "randomForest"))
 
-[Lifestyle articles is available here](./Lifestyle_Summary.html)
+<!-- Shiny App Run Code -->
 
-[Entertainment articles is available here](./Entertainment_Summary.html)
+# Shiny App Run Code:
 
-[Business articles is available here](./Business_Summary.html)
+The following code is required to run and output the Shiny App. This can be run in the R Console after a Commit to GitHub.
 
-[Social Media articles is available here](./SocialMedia_Summary.html)
-
-[Tech articles is available here](./Tech_Summary.html)
-
-[World articles is available here](./World_Summary.html)
-
-<!-- Render Code -->
-
-# Our Shiny App Render Code:
-
-shiny::runGitHub("ST558_Final_Project","magarittenguyen")
+#run shiny app
+shiny::runGitHub(repo="ST558_Final_Project", username="magarittenguyen")
 
 
