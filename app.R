@@ -465,7 +465,7 @@ ui <- dashboardPage(
                                      numericInput("numRows",
                                                   "Number of Rows to Filter On:",
                                                   value =  5, min = 1, max = 1472),
-                                     downloadButton("data_download", "Download Data (.csv)") ), 
+                                     downloadButton("data_download", "Download Data") ), 
                         mainPanel( width = 10, 
                                    DTOutput("data_table") ),
               ), #end of fluidPage() function
@@ -482,6 +482,8 @@ ui <- dashboardPage(
   
 
 ####################################### SERVER ################################################
+  
+########### Data Exploration 
   
 # Define server logic required to draw the plots
 server <- shinyServer(function(input, output, session) {
@@ -690,6 +692,7 @@ server <- shinyServer(function(input, output, session) {
       geom_point(aes(shape = sensitive_fctr , color=Label), position="jitter", alpha=0.6, show.legend = c("shape"=TRUE, "color"=FALSE)) 
     
   })
+  
   #debug
   #  output$test <- renderText({
   #    
@@ -699,7 +702,19 @@ server <- shinyServer(function(input, output, session) {
   #  
   #  })
   
-  ##########################################################################
+  ########## Modeling 
+  
+  #Train and Test Data
+  output$TrainTest <- renderText({
+    
+    sum(str_detect(string=toupper(cosmetics$Ingredients), pattern = input$find_ingredient, 
+                   negate=input$TF_ingredient_exclude ))
+    
+  })
+  
+  
+  
+  ########### Data  
   
   #data download
   #created reactive data
