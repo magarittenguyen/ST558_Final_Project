@@ -176,19 +176,19 @@ ui <- dashboardPage(
                                                   label="Select Row Variable",
                                                   selected = "Brand", #default value
                                                   choices = # If you want to get both factors 
-                                                            #and characters use
-                                                colnames(cosmetics[, sapply(cosmetics, class) %in%                                                            c('character', 'factor')]),                                                              multiple = FALSE ),           
+                                                    #and characters use
+                                                    colnames(cosmetics[, sapply(cosmetics, class) %in%                                                            c('character', 'factor')]),                                                              multiple = FALSE ),           
                                    
                                    #row var
                                    selectizeInput(inputId="contingency_table_col", 
                                                   label="Select Column Variable",
                                                   selected = "Label", #default value
                                                   choices = # If you want to get both factors 
-                                                            #and characters use
-                                               colnames(cosmetics[, sapply(cosmetics, class) %in%                                                            c('character', 'factor')]),                                                              multiple = FALSE ), 
-                                                  #options = list(maxItems = 2
+                                                    #and characters use
+                                                    colnames(cosmetics[, sapply(cosmetics, class) %in%                                                            c('character', 'factor')]),                                                              multiple = FALSE ), 
+                                   #options = list(maxItems = 2
                                    
-                                  ) #end of box()
+                               ) #end of box()
                                
                                #output contingency table
                                
@@ -198,7 +198,7 @@ ui <- dashboardPage(
               mainPanel(
                 dataTableOutput("contingency_table"),
                 plotOutput("correlation"), 
-
+                
               ) #end of mainPanel() function
               
               ), #end of fluidRow() function
@@ -209,31 +209,31 @@ ui <- dashboardPage(
                 #outputting bar charts
                 mainPanel(
                   plotOutput("plot_freq_product")
-                  ), #end of mainPanel() function
+                ), #end of mainPanel() function
                 
-                  #inputs for my box plots that are separated by skin type
-                  #also used for avg price plot 
-                  selectizeInput(inputId="bar_plot_skintype", 
-                                 label="Select Skin Type Variable",
-                                 selected = "combination_fctr", #default value
-                                 choices = c("combination_fctr", "dry_fctr", "normal_fctr", 
-                                             "oily_fctr", "sensitive_fctr"),
-                                 multiple = FALSE ), 
-                  #for the response variable = y = Price or Rank
-                   selectizeInput(inputId="bar_plot_response", 
-                                 label="Select Response Variable",
-                                 selected = "Price", #default value
-                                 choices = c("Price", "Rank"),
-                                 multiple = FALSE ), 
-                 
+                #inputs for my box plots that are separated by skin type
+                #also used for avg price plot 
+                selectizeInput(inputId="bar_plot_skintype", 
+                               label="Select Skin Type Variable",
+                               selected = "combination_fctr", #default value
+                               choices = c("combination_fctr", "dry_fctr", "normal_fctr", 
+                                           "oily_fctr", "sensitive_fctr"),
+                               multiple = FALSE ), 
+                #for the response variable = y = Price or Rank
+                selectizeInput(inputId="bar_plot_response", 
+                               label="Select Response Variable",
+                               selected = "Price", #default value
+                               choices = c("Price", "Rank"),
+                               multiple = FALSE ), 
+                
                 #outputting freq tables
                 mainPanel(
                   plotOutput("plot_freq_skintype"), 
                   plotOutput("plot_avgprice_skintype")
                   #tableOutput("debug")
                 ), #end of mainPanel() function
-              
-              
+                
+                
               ), #end of fluidRow() function      
               
               br(), #add break in app output
@@ -241,7 +241,7 @@ ui <- dashboardPage(
               fluidRow( 
                 #outputting scatter plots - all product types
                 #mainPanel(
-                  #plotOutput("plot_scatter_all")
+                #plotOutput("plot_scatter_all")
                 #), #end of mainPanel() function
                 
                 #scatter plot of Price vs. Rank -- possibility of subset of type of products
@@ -255,12 +255,12 @@ ui <- dashboardPage(
                 checkboxInput(inputId="scatter_plot_chkbox",
                               label="Remove Rank Equal to 0",
                               value = FALSE
-                              ),
+                ),
                 
                 checkboxInput(inputId="toggle_axis",
                               label="Fit The Plot by Zooming In",
                               value = FALSE
-                              ),
+                ),
                 
                 #outputting scatter plots - subset by type of product
                 mainPanel(
@@ -269,7 +269,7 @@ ui <- dashboardPage(
                 ) #end of mainPanel() function
                 
               ), #end of fluidRow() function      
-
+              
               fluidRow(
                 #might move into aother fluid row
                 selectizeInput(inputId="scatter_box_sub", 
@@ -352,7 +352,7 @@ ui <- dashboardPage(
                                      downloadButton("data_download", "Download Data") ), 
                         mainPanel( width = 10, 
                                    DTOutput("data_table") ),
-                                   ), #end of fluidPage() function
+              ), #end of fluidPage() function
       ) #end of item 4 - data 
       
       
@@ -427,7 +427,7 @@ server <- shinyServer(function(input, output, session) {
     validate(need(input$contingency_table_row,''),
              need(input$contingency_table_col,''))
     #xtabs(as.formula(paste0("~",input$contingency_table_row,"+",input$contingency_table_col)), 
-          #cosmetics)
+    #cosmetics)
     f <- as.formula(paste0("~", input$contingency_table_row,"+",input$contingency_table_col ))
     pivot_wider(as_tibble(xtabs(f , cosmetics)), names_from = input$contingency_table_col, values_from = n)
     #pivot_wider(as_tibble(xtabs(~ Brand + Label, cosmetics)), names_from = Label, values_from = n)
@@ -437,72 +437,72 @@ server <- shinyServer(function(input, output, session) {
   #performing correlations between variables of interest
   #no input stuff because only two options...
   output$correlation <- renderPlot({
-  cor_mat <- cor(cosmetics %>% 
-                   select(Price, Rank), method = "pearson")
-  
-  #correlation plot below
-  corrplot(cor_mat, 
-           type = "lower",
-           tl.pos = "lt",
-           title = "Correlation Coefficients for Sephora Cosmetics Data",
-           mar=c(0,0,2,0)
-  ) #end of corrplot() function
-  
+    cor_mat <- cor(cosmetics %>% 
+                     select(Price, Rank), method = "pearson")
+    
+    #correlation plot below
+    corrplot(cor_mat, 
+             type = "lower",
+             tl.pos = "lt",
+             title = "Correlation Coefficients for Sephora Cosmetics Data",
+             mar=c(0,0,2,0)
+    ) #end of corrplot() function
+    
   })
   
   #bar charts
   #Freq of Type of cosmetics
   output$plot_freq_product <- renderPlot({
     
-  ggplot(data = cosmetics, aes(x = Label)) + 
-    geom_bar(aes(fill= Label), show.legend = FALSE) + 
-    ggtitle("Type of Cosmetics Available in Sephora Data") +
-    labs(x="Type of Cosmetic", y="Frequency", fill="Type of Cosmetic")
-
+    ggplot(data = cosmetics, aes(x = Label)) + 
+      geom_bar(aes(fill= Label), show.legend = FALSE) + 
+      ggtitle("Type of Cosmetics Available in Sephora Data") +
+      labs(x="Type of Cosmetic", y="Frequency", fill="Type of Cosmetic")
+    
   })
   
   #bar charts
   #Type of Cosmetics Available in Sephora Data for Combination Skin
   output$plot_freq_skintype <- renderPlot({
     
-  x = switch(input$bar_plot_skintype, combination_fctr = "Combination Skin", 
-                                              dry_fctr = "Dry Skin",
-                                           normal_fctr = "Normal Skin",
-                                             oily_fctr = "Oily Skin",
-                                        sensitive_fctr = "Sensitive Skin")
+    x = switch(input$bar_plot_skintype, combination_fctr = "Combination Skin", 
+               dry_fctr = "Dry Skin",
+               normal_fctr = "Normal Skin",
+               oily_fctr = "Oily Skin",
+               sensitive_fctr = "Sensitive Skin")
     
-  ggplot(data = cosmetics, aes(x = Label)) + 
-    geom_bar(aes(fill= .data[[input$bar_plot_skintype]]), position="dodge") + 
-    ggtitle(paste("Type of Cosmetics Available in Sephora Data for", x)) +
-    labs(x="Type of Cosmetics", y="Frequency", fill=x)
-  
+    ggplot(data = cosmetics, aes(x = Label)) + 
+      geom_bar(aes(fill= .data[[input$bar_plot_skintype]]), position="dodge") + 
+      ggtitle(paste("Type of Cosmetics Available in Sephora Data for", x)) +
+      labs(x="Type of Cosmetics", y="Frequency", fill=x)
+    
   })
   
   #bar plots by average PRICE!
   #Type of cosmetic vs. Average Price of each type of cosmetic - Combination
   output$plot_avgprice_skintype <- renderPlot({
     
-  x = switch(input$bar_plot_skintype, combination_fctr = "Combination Skin", 
-                                              dry_fctr = "Dry Skin",
-                                           normal_fctr = "Normal Skin",
-                                             oily_fctr = "Oily Skin",
-                                        sensitive_fctr = "Sensitive Skin")    
-  
-  d <- cosmetics %>%
-         group_by(Label, get(input$bar_plot_skintype)) %>%
-         summarize(avg=mean(get(input$bar_plot_response)) ) %>% 
-         mutate(avg_fmt = paste0(ifelse( input$bar_plot_response == "Price" ,"$", ""), 
-                                 sprintf("%0.2f", round(avg, 2)) )) %>%
-         rename( skintype  = `get(input$bar_plot_skintype)` )
+    x = switch(input$bar_plot_skintype, combination_fctr = "Combination Skin", 
+               dry_fctr = "Dry Skin",
+               normal_fctr = "Normal Skin",
+               oily_fctr = "Oily Skin",
+               sensitive_fctr = "Sensitive Skin")    
     
-  ggplot(data = d , 
-    aes(x = Label, y=avg, group = skintype )) +  
-    geom_col(aes(fill= skintype), position="dodge") + 
-    ggtitle(paste("Type of Cosmetics Available vs. Average", input$bar_plot_response, 
-                  "in Sephora Data for", x )) +
-    labs(x="Type of Cosmetics", y=paste("Average",input$bar_plot_response ) , fill = x) +
-    geom_label( aes(label = avg_fmt), position=position_dodge(width=0.9), size=rel(4) ) 
- 
+    d <- cosmetics %>%
+      group_by(Label, get(input$bar_plot_skintype)) %>%
+      summarize(avg=mean(get(input$bar_plot_response)) ) %>% 
+      mutate(avg_fmt = paste0(ifelse( input$bar_plot_response == "Price" ,"$", ""), 
+                              sprintf("%0.2f", round(avg, 2)) )) %>%
+      rename( skintype  = `get(input$bar_plot_skintype)` )
+    
+    ggplot(data = d , 
+           aes(x = Label, y=avg, group = skintype )) +  
+      geom_col(aes(fill= skintype), position="dodge") + 
+      ggtitle(paste("Type of Cosmetics Available vs. Average", input$bar_plot_response, 
+                    "in Sephora Data for", x )) +
+      labs(x="Type of Cosmetics", y=paste("Average",input$bar_plot_response ) , fill = x) +
+      geom_label( aes(label = avg_fmt), position=position_dodge(width=0.9), size=rel(4) ) 
+    
   })
   
   #bar plots by average PRICE! -- debuggingggg!
@@ -516,7 +516,7 @@ server <- shinyServer(function(input, output, session) {
   #     rename( skintype  = `get(input$bar_plot_skintype)` )
   #   
   # })    
-
+  
   #scatter plots
   #everything
   # output$plot_scatter_all <- renderPlot({
@@ -533,47 +533,47 @@ server <- shinyServer(function(input, output, session) {
   #scatter plots
   #by type of product
   output$plot_scatter_subs <- renderPlot({
-  
-  #reformat output text
-  y = switch(input$scatter_plot_sub,  "ALL"         = "All",
-                                      "Moisturizer" = "Moisturizer", 
-                                      "Cleanser"    = "Cleanser",
-                                      "Treatment"   = "Treatment",
-                                      "Face Mask"   = "Face Mask",
-                                      "Eye cream"   = "Eye Cream",
-                                      "Sun protect" = "Sun Protection" ) 
-  
-  #temp var 
-  ALL <- c("Moisturizer", "Cleanser", "Treatment", "Face Mask", "Eye cream", "Sun protect")
-  scatter_plot <- ifelse(input$scatter_plot_sub == "ALL", ALL, input$scatter_plot_sub)
     
-  if (input$scatter_plot_sub == "ALL") { 
+    #reformat output text
+    y = switch(input$scatter_plot_sub,  "ALL"         = "All",
+               "Moisturizer" = "Moisturizer", 
+               "Cleanser"    = "Cleanser",
+               "Treatment"   = "Treatment",
+               "Face Mask"   = "Face Mask",
+               "Eye cream"   = "Eye Cream",
+               "Sun protect" = "Sun Protection" ) 
     
-    data <- cosmetics } else { 
+    #temp var 
+    ALL <- c("Moisturizer", "Cleanser", "Treatment", "Face Mask", "Eye cream", "Sun protect")
+    scatter_plot <- ifelse(input$scatter_plot_sub == "ALL", ALL, input$scatter_plot_sub)
+    
+    if (input$scatter_plot_sub == "ALL") { 
       
-      data <- cosmetics %>% 
-        filter(Label %in% scatter_plot)
-    } 
-  
-  if (input$scatter_plot_chkbox == TRUE) {data <- data %>%
-                                                    filter (Rank != 0) }
-  
-  #Moisturizer
-  #setting the stage to add layers
-  g <- ggplot(data ,  #drop outliers... 
-                      # , Rank != 0 (need radio button? --  for both scatter plots...)
+      data <- cosmetics } else { 
+        
+        data <- cosmetics %>% 
+          filter(Label %in% scatter_plot)
+      } 
+    
+    if (input$scatter_plot_chkbox == TRUE) {data <- data %>%
+      filter (Rank != 0) }
+    
+    #Moisturizer
+    #setting the stage to add layers
+    g <- ggplot(data ,  #drop outliers... 
+                # , Rank != 0 (need radio button? --  for both scatter plots...)
                 aes(x = Rank, y = Price))
-  #scatter plot with linear regression line
-  p <- g + geom_point() +
-       labs(title = paste("Rank vs. Price for", y, "Type of Products" )) +
-       geom_smooth(method = lm) 
+    #scatter plot with linear regression line
+    p <- g + geom_point() +
+      labs(title = paste("Rank vs. Price for", y, "Type of Products" )) +
+      geom_smooth(method = lm) 
     # + xlim(0, 5)
-  
-  #chose to zoom into axis or not
-  if (input$toggle_axis == TRUE) { 
-    p } else {
-      p + xlim(0, 5) 
-    }
+    
+    #chose to zoom into axis or not
+    if (input$toggle_axis == TRUE) { 
+      p } else {
+        p + xlim(0, 5) 
+      }
     
   })
   
@@ -581,54 +581,54 @@ server <- shinyServer(function(input, output, session) {
   #A scatter plot with boxplots
   output$scatter_box_sub <- renderPlot({
     
-  x = switch(input$scatter_box_sub,               ALL  = "All Skin",
-                                      combination_fctr = "Combination Skin", 
-                                              dry_fctr = "Dry Skin",
-                                           normal_fctr = "Normal Skin",
-                                             oily_fctr = "Oily Skin",
-                                        sensitive_fctr = "Sensitive Skin") 
-  
-  if (input$scatter_box_sub == "ALL") { 
+    x = switch(input$scatter_box_sub,               ALL  = "All Skin",
+               combination_fctr = "Combination Skin", 
+               dry_fctr = "Dry Skin",
+               normal_fctr = "Normal Skin",
+               oily_fctr = "Oily Skin",
+               sensitive_fctr = "Sensitive Skin") 
     
-    data <- cosmetics } else { 
+    if (input$scatter_box_sub == "ALL") { 
       
-      data <- cosmetics %>% 
-        filter( get(input$scatter_box_sub) == "Yes" )
-    } 
-  
-  #filtering for combination
-  ggplot(data=data,
-         aes(y=Price, x=Label)) + 
-    labs(title = paste("Type of Products for", x, "vs. Price Broken Down By Sensitivity"), 
-         x="Types of Skin Products", 
-         y="Price") +
-    geom_boxplot() + 
-    geom_point(aes(shape = sensitive_fctr , color=Label), position="jitter", alpha=0.6, show.legend = c("shape"=TRUE, "color"=FALSE)) 
-  
+      data <- cosmetics } else { 
+        
+        data <- cosmetics %>% 
+          filter( get(input$scatter_box_sub) == "Yes" )
+      } 
+    
+    #filtering for combination
+    ggplot(data=data,
+           aes(y=Price, x=Label)) + 
+      labs(title = paste("Type of Products for", x, "vs. Price Broken Down By Sensitivity"), 
+           x="Types of Skin Products", 
+           y="Price") +
+      geom_boxplot() + 
+      geom_point(aes(shape = sensitive_fctr , color=Label), position="jitter", alpha=0.6, show.legend = c("shape"=TRUE, "color"=FALSE)) 
+    
   })
   #debug
- #  output$test <- renderText({
- #    
- #  #temp var 
- #  ALL <- c("Moisturizer", "Cleanser", "Treatment", "Face Mask", "Eye cream", "Sun protect")
- # ifelse(input$scatter_plot_sub == "ALL", ALL, input$scatter_plot_sub)
- #  
- #  })
+  #  output$test <- renderText({
+  #    
+  #  #temp var 
+  #  ALL <- c("Moisturizer", "Cleanser", "Treatment", "Face Mask", "Eye cream", "Sun protect")
+  # ifelse(input$scatter_plot_sub == "ALL", ALL, input$scatter_plot_sub)
+  #  
+  #  })
   
   ##########################################################################
-
+  
   #data download
   #created reactive data
   d <- reactive( {cosmetics %>%
-                    as_tibble ( ) %>% 
-                    `[`( input$display_vars )
-        } )
+      as_tibble ( ) %>% 
+      `[`( input$display_vars )
+  } )
   
   #output for data table that we will display and let user interact with
   output$data_table <-renderDT( { d( ) %>%
-                                    datatable ( options = list ( lengthMenu = list (c(10, 25, 50, 100, -1), c("10", "25", "50", "100", "All") ) ) )
-      
-    } )
+      datatable ( options = list ( lengthMenu = list (c(10, 25, 50, 100, -1), c("10", "25", "50", "100", "All") ) ) )
+    
+  } )
   
   #downloading the data
   output$data_download <- downloadHandler( filename = function() { paste0( "cosmetics_", Sys.Date(), ".csv" ) }, content = function(file) { if(length(input$data_table_rows_selected) == 0) {write.csv(d(), file, row.names = FALSE) }else { write.csv( d()[input$data_table_rows_selected, ], file, row.names = FALSE ) } })
