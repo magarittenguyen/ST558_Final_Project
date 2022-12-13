@@ -38,7 +38,7 @@ I called my app the *Cosmetics App* and it is meant to predict the price of a pr
 
 The app has several features, which allows the user to select certain varibles, subset the data, and do some data exploration. The app also allows the user to create numerical and graphical summmaries, as well as create different predictive models with the data provided. The predictive models used in this app will be (i) multiple linear regression, (ii) regression tree, and (iii) random forest. For the predictive models, the response variable is `Price`, and the other explanitory variables from the data set will be used to predict the price of the cosmetic product. 
 
-We will finally compare these three models to see, which model has the best predicitive ability. This is assessed by the model with the lowest root mean squared error (RMSE).  
+Finally, we will compare these three models to see, which model has the best predicitive ability. This is assessed by the model with the lowest root mean squared error (RMSE).  
 
 NOTE: 
 
