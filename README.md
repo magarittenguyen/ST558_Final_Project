@@ -45,8 +45,8 @@ NOTE:
 I would like to mention the following for my app...
 
 - The ingredients were hard to seperate due to commas within parenthases that were not being parsed correctly. There was no easy way I could this without errors, so I only made it possible to the user to subset products by ingredients and see how many products were available with the inputted character string(s). 
-- Brand and Ingredients varaibles had too many options or were too unique on every row, respecively, to the point where their summaries were not meaningful. So, I had to chose varibles that could be grouped together when creating summaries and modeling.
-- At the top of my app.R file, when reading in my data, I needed to remove all the N/A data. It caused many issues in my modeling when I ran my scratch code.
+- Brand and Ingredients varaibles had too many options or were too unique on every row, respecively, to the point where their summaries were not meaningful. So, I had to chose varibles that could be grouped together when creating summaries and modeling.  
+- I don't see any *NA* values in my data, but there seems to be some based on the warnings I see on the R Console when I when I ran my modeling scratch code. At the top of my app.R file, when reading in my data, I removed all the *NA* data via na.omit(). 
 
 <!-- A list of packages needed to run the app -->
 
