@@ -22,7 +22,29 @@ library(shinydashboard)
 
 #read in cosmetic data
 #https://www.kaggle.com/datasets/kingabzpro/cosmetics-datasets/code?resource=download
-cosmetics <- read_csv("cosmetics.csv")
+cosmetics0 <- read_csv("cosmetics.csv")
+
+#data source - in source above that was downloaded
+  
+  #create factors
+  #name is too unique so remove
+  #create var for main_ingredient -- 355... not too useful 
+  cosmetics <- cosmetics0 %>%
+    mutate(# type of skin -- factors for each
+      combination_fctr = factor(Combination, c(0, 1), labels = c("No", "Yes")), 
+      dry_fctr = factor(Dry, c(0, 1), labels = c("No", "Yes")), 
+      normal_fctr = factor(Normal, c(0, 1), labels = c("No", "Yes")), 
+      oily_fctr = factor(Oily, c(0, 1), labels = c("No", "Yes")), 
+      sensitive_fctr = factor(Sensitive, c(0,1), labels = c("No", "Yes")), 
+      #type of products - label -- factors
+      label_fctr = factor(Label),
+      #brand of product
+      brand_fctr = factor(Brand)
+    ) %>% #end of the mutate() function 
+    separate (Ingredients, c("main_ingredient", NA), ",", remove =FALSE, extra = "merge",
+              fill = "right") %>%
+    select (! c("Combination", "Dry", "Normal", "Oily", "Sensitive", "Name") )
+  
 
 ####################################### UI ################################################
 #https://fontawesome.com/search?q=info&o=r
@@ -374,34 +396,6 @@ ui <- dashboardPage(
 ####################################### SERVER ################################################
 # Define server logic required to draw the plots
 server <- shinyServer(function(input, output, session) {
-  
-  #read in cosmetic data
-  #https://www.kaggle.com/datasets/kingabzpro/cosmetics-datasets/code?resource=download
-  cosmetics0 <- read_csv("cosmetics.csv")
-  
-  #data source - in source above that was downloaded
-  getData <- reactive({
-    
-    #create factors
-    #name is too unique so remove
-    #create var for main_ingredient -- 355... not too useful 
-    cosmetics <- cosmetics0 %>%
-      mutate(# type of skin -- factors for each
-        combination_fctr = factor(Combination, c(0, 1), labels = c("No", "Yes")), 
-        dry_fctr = factor(Dry, c(0, 1), labels = c("No", "Yes")), 
-        normal_fctr = factor(Normal, c(0, 1), labels = c("No", "Yes")), 
-        oily_fctr = factor(Oily, c(0, 1), labels = c("No", "Yes")), 
-        sensitive_fctr = factor(Sensitive, c(0,1), labels = c("No", "Yes")), 
-        #type of products - label -- factors
-        label_fctr = factor(Label),
-        #brand of product
-        brand_fctr = factor(Brand)
-      ) %>% #end of the mutate() function 
-      separate (Ingredients, c("main_ingredient", NA), ",", remove =FALSE, extra = "merge",
-                fill = "right") %>%
-      select (! c("Combination", "Dry", "Normal", "Oily", "Sensitive", "Name") )
-    
-  })
   
   # creating summaries for variables in cosmetics data
   output$data_summaries <- renderText({
