@@ -2,15 +2,15 @@
 # Name: Magaritte Nguyen
 # Date: 01DEC2022
 # Class: ST 558 (601) Fall 2022 Data Science for Statisticians  
-# Assignment: 
-# File: 
+# Assignment: Final Project
+# File: Final Project Scratch Code
 #######################################################
 
 #https://www.kaggle.com/datasets/kingabzpro/cosmetics-datasets/code?resource=download
 
 #check library
-#getwd()
-#setwd("D:/ST558/Final Project/Final_Project/ST558_Final_Project")
+getwd()
+setwd("D:/ST558/Final Project/Final_Project/ST558_Final_Project")
 
 #libraries
 library(tidyverse)
@@ -43,10 +43,18 @@ cosmetics <- cosmetics0 %>%
 
 
 #A quick summary of different variables is as shown below:
-summary(cosmetics)
+# letting user define
+var_names <- colnames(cosmetics) 
+
+cosmetics %>% 
+  select (all_of(var_names)) %>%
+  summary()
+
+#summary(cosmetics) 
 
 #listing out unique items per variable
 
+#this is to help me summarize the about the data part -- refernce this and make sure that tha app is not running by pressig stop int he console...
 #type of cosmetic / skin care product
 length(unique(cosmetics$Label))
 unique(cosmetics$Label)
@@ -61,7 +69,7 @@ unique(cosmetics$Name)
 
 #look up ingredients of interest
 #currently using products with carrot derivatives
-sum(str_detect(string=toupper(cosmetics$Ingredients), pattern = "CAR(OTA|ROTENE|ROT)", negate = FALSE )) 
+sum(str_detect(string=toupper(cosmetics$Ingredients), pattern = "CAR(OTA|OTENE|ROT)", negate = FALSE )) 
 #all non "Sulfur" products - bc this ingredient is excluded
 #looks up english and british spelling / derivatives of the same ingredient
 #regular expressions...
@@ -73,6 +81,7 @@ sum(str_detect(string=toupper(cosmetics$Ingredients), pattern = "SUL(F|PH)(UR|AT
 
 #label vs. brand
 table(cosmetics$Brand, cosmetics$Label)
+#done
 
 #label vs. every skin type
 table(cosmetics$Label, cosmetics$combination_fctr)
@@ -82,6 +91,7 @@ table(cosmetics$Label, cosmetics$oily_fctr)
 table(cosmetics$Label, cosmetics$sensitive_fctr)
 
 #brand, label, skin type
+#might not do bc might break -- MAYBE LATER!!
 table(cosmetics$Brand, cosmetics$Label, cosmetics$combination_fctr) #Yes and No for combination skin
 table(cosmetics$Brand, cosmetics$Label, cosmetics$dry_fctr)
 table(cosmetics$Brand, cosmetics$Label, cosmetics$normal_fctr)
@@ -215,10 +225,10 @@ ggplot(data = cosmetics %>%
 
 
 #scatter plots
-#everythng
+#everything
 #setting the stage to add layers
 g <- ggplot(cosmetics, aes(x = Rank, y = Price))
-#scatter plot with linear regression line for width by weight
+#scatter plot with linear regression line
 g + geom_point() +
   labs(title = "Rank vs. Price for Combination Type Skin Products") +
   geom_smooth(method = lm) 
@@ -231,12 +241,12 @@ g + geom_point() +
 g <- ggplot(cosmetics %>%
               filter(Label == "Moisturizer", Rank != 0) ,  # drop outliers...
             aes(x = Rank, y = Price))
-#scatter plot with linear regression line for width by weight
+#scatter plot with linear regression line 
 g + geom_point() +
   labs(title = "Rank vs. Price for Combination Type Skin Products - Moisturizer") +
   geom_smooth(method = lm) 
 
-# do later -- "Cleanser"    "Treatment"   "Face Mask"   "Eye cream"   "Sun protect"
+# do later -- "Moisturizer", "Cleanser"    "Treatment"   "Face Mask"   "Eye cream"   "Sun protect"
 #remove outlier though to test before drop...
 
 #boxplots - for types of skin care products against Price and Rank...
