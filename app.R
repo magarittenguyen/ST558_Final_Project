@@ -20,11 +20,12 @@ library(DT)
 library(shiny)
 library(shinydashboard)
 
-
-#https://fontawesome.com/search?q=info&o=r
+#read in cosmetic data
+#https://www.kaggle.com/datasets/kingabzpro/cosmetics-datasets/code?resource=download
+cosmetics0 <- read_csv("cosmetics.csv")
 
 ####################################### UI ################################################
-
+#https://fontawesome.com/search?q=info&o=r
 ui <- dashboardPage(
   skin="blue",
   
@@ -638,3 +639,9 @@ server <- shinyServer(function(input, output, session) {
 }) # end of the server function 
 
 shinyApp(ui = ui, server = server)
+
+#must run inthe colsole
+shiny::runGitHub("ST558_Final_Project","magarittenguyen")
+
+#https://github.com/magarittenguyen/ST558_Final_Project
+
