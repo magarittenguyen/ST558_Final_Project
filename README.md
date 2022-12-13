@@ -50,7 +50,7 @@ The following packages are used for our data manipulation, prediction, etc.:
 
 The following code will install the above packages. This can be run in the R Console.
 
-#install packages
+#install packages   
 install.packages(c("shiny", "shinydashboard", 
                    "tidyverse", "corrplot", "ggplot2", "caret", "DT", 
                    "tree", "randomForest"))
@@ -61,7 +61,7 @@ install.packages(c("shiny", "shinydashboard",
 
 The following code is required to run and output the Shiny App. This can be run in the R Console after a Commit to GitHub.
 
-#run shiny app
+#run shiny app   
 shiny::runGitHub(repo="ST558_Final_Project", username="magarittenguyen")
 
 
