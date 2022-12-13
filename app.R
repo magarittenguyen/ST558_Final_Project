@@ -179,13 +179,21 @@ ui <- dashboardPage(
                        box(background="purple",width=12,
                            h4("This app uses data from a website called Kaggle, which is described as 'Your Machine Learning and Data Science Community'. It offers a no-setup, customizable, Jupyter Notebooks environment and access GPUs at no cost to you and a huge repository of community published data. For our purposes, I downloaded a data set called *cosmetics.csv*, which can be found", a(href = "https://www.kaggle.com/datasets/kingabzpro/cosmetics-datasets", "here"), " -- on the top right corner. This data set includes data from", a(href = "https://en.wikipedia.org/wiki/Sephora", "Sephora"), " and contains variables such as the type of cosmetic category, brand, product name, an ingredients list, rating, price, and the category of skin that these products are meant for (combinaiton, dry, normal, oily, sensitive)."),
                            
-                           br(),
+                           br(), #break
                            
-                           h4(""),
+                           h4("This data set consists of 11 variables (Label, Brand, Name, Price, Rank, Ingredients, Combination, Dry, Normal, Oily, Sensitive) and 1472 observations."),
                            
-                           h4(""),
-                           
-                           h4("")
+                           h4("> Label = Type of product"),   
+                           h4("> Brand = Brand of product"),
+                           h4("> Name = Name of Cosmetic"),
+                           h4("> Price = Price in USD"),
+                           h4("> Rank = Ranking"),
+                           h4("> Ingredients = Ingredients"),  
+                           h4("> Combination = Combination of Dry and oily"),
+                           h4("> Dry = For Dry Skin"),
+                           h4("> Normal = For Normal Skin "),
+                           h4("> Oily = For Oily Skin"), 
+                           h4("> Sensitive = For Sensitive Skin"),
                            
                        ) #end of box() function
                 ) #end of column() function 
@@ -198,20 +206,30 @@ ui <- dashboardPage(
       tabItem(tabName = "data-exploration",
               
               fluidRow( #summary of all vars - options 
+                # Summary of Cosmetic Data Set Variables
+                h2("Summary of Cosmetic Data Set Variables"),
                 #also var i created in the data available
                 box(width=12,background="blue",
                     selectizeInput(inputId="summary_select", 
                                    label="Summary of Cosmetic Data Set Variables",
                                    selected = "Price", #default value
                                    choices = colnames(cosmetics), 
-                                   multiple = FALSE ),
+                                   multiple = FALSE )
                     
-                    #outputting the data summary
-                    mainPanel(
-                      verbatimTextOutput("data_summaries")),
-                    
-                ), 
+                ), #end of box()
                 
+                #outputting the data summary
+                mainPanel(
+                  verbatimTextOutput("data_summaries") )
+                
+              ), #end of fluidRow() function
+                
+                br(), #break
+
+                
+                fluidRow(
+                # Serach Product by Ingredient
+                h2("Serach Product by Ingredient"),
                 #text finding in ingredients for products
                 box(width=12, background="blue", 
                     textInput(inputId="find_ingredient", 
@@ -219,23 +237,27 @@ ui <- dashboardPage(
                               value = "SUL(F|PH)(UR|ATE|A)"),
                     checkboxInput(inputId = "TF_ingredient_exclude",
                                   label = "Exclude Ingredient From Product?",
-                                  value = FALSE ), #unchecked default
+                                  value = FALSE ) #unchecked default
                     
-                    #outputting results for incredients in produts
-                    mainPanel(
-                      #verbatimTextOutput("data_summaries"), 
-                      verbatimTextOutput("inc_exc_ingredient")
-                      #plotOutput("sleepPlot"),
-                      #textOutput("info"),
-                      #tableOutput("table")
-                    ) #end of mainPanel() function
-                    
-                ) # end of box() function
+                ), # end of box() function
+                
+                #outputting results for incredients in produts
+                mainPanel(
+                  #verbatimTextOutput("data_summaries"), 
+                  verbatimTextOutput("inc_exc_ingredient")
+                  #plotOutput("sleepPlot"),
+                  #textOutput("info"),
+                  #tableOutput("table")
+                ) #end of mainPanel() function
                 
               ), #end of fluidRow() function
               
+              br(), #break
+              
               #charts and graphs - row names
               fluidRow( column(width=6 , #12 width is the max
+                               # Contingency Table
+                               h2("Contingency Table"),
                                box(width = 12, background = "blue", 
                                    #row var
                                    selectizeInput(inputId="contingency_table_row", 
@@ -243,7 +265,9 @@ ui <- dashboardPage(
                                                   selected = "Brand", #default value
                                                   choices = # If you want to get both factors 
                                                     #and characters use
-                                                    colnames(cosmetics[, sapply(cosmetics, class) %in%                                                            c('character', 'factor')]),                                                              multiple = FALSE ),           
+                                                    colnames(cosmetics[, sapply(cosmetics, class) %in% 
+                                                                         c('character', 'factor')]),   
+                                                  multiple = FALSE ),           
                                    
                                    #row var
                                    selectizeInput(inputId="contingency_table_col", 
@@ -251,7 +275,9 @@ ui <- dashboardPage(
                                                   selected = "Label", #default value
                                                   choices = # If you want to get both factors 
                                                     #and characters use
-                                                    colnames(cosmetics[, sapply(cosmetics, class) %in%                                                            c('character', 'factor')]),                                                              multiple = FALSE ), 
+                                                    colnames(cosmetics[, sapply(cosmetics, class) %in%    
+                                                                         c('character', 'factor')]),     
+                                                  multiple = FALSE ), 
                                    #options = list(maxItems = 2
                                    
                                ) #end of box()
@@ -262,16 +288,31 @@ ui <- dashboardPage(
               
               #outputting contingency tables
               mainPanel(
-                dataTableOutput("contingency_table"),
-                plotOutput("correlation"), 
+                dataTableOutput("contingency_table")
+                #plotOutput("correlation"), 
                 
               ) #end of mainPanel() function
               
               ), #end of fluidRow() function
               
               br(), #add break in app output
+
               
               fluidRow( 
+              # Contingency Table
+              h2("Correlation Plot"),
+              #outputting contingency tables
+              mainPanel(
+                plotOutput("correlation")
+                
+              ), #end of mainPanel() function
+              ), #end of fluidRow() function
+              
+              br(), #add break in app output
+
+              fluidRow( 
+                # Bar Table
+                h2("Bar Plots"),
                 #outputting bar charts
                 mainPanel(
                   plotOutput("plot_freq_product")
@@ -300,11 +341,13 @@ ui <- dashboardPage(
                 ), #end of mainPanel() function
                 
                 
-              ), #end of fluidRow() function      
+              ), #end of fluidRow() function 
               
-              br(), #add break in app output
+              br(), #break
               
               fluidRow( 
+                # Scatter Table
+                h2("Scatter Plots"),
                 #outputting scatter plots - all product types
                 #mainPanel(
                 #plotOutput("plot_scatter_all")
@@ -336,8 +379,12 @@ ui <- dashboardPage(
                 
               ), #end of fluidRow() function      
               
+              br(), #break
+              
               fluidRow(
-                #might move into aother fluid row
+                # Box Table
+                h2("Box Plots"),
+                #might move into another fluid row
                 selectizeInput(inputId="scatter_box_sub", 
                                label="Select Subset Variable",
                                selected = "ALL", #default value
@@ -358,7 +405,7 @@ ui <- dashboardPage(
       
       
       
-      #Third tab content
+      ########## Third tab content
       #modeling -- IS THERE SUPPOSED TO BE SOMETHING ON THIS PAGE?!?!?!
       tabItem(tabName = "modeling",
               fluidRow(
@@ -370,7 +417,7 @@ ui <- dashboardPage(
               )
       ),  # end of item 3 - modeling  
       
-      #3.1 sub tab content
+      ########## 3.1 sub tab content
       #modeling-info    
       tabItem(tabName = "modeling-info",
               fluidRow(
@@ -382,7 +429,7 @@ ui <- dashboardPage(
               )
       ),   #end of item 3.1 - modeling-info  
       
-      #3.2 sub tab content
+      ########## 3.2 sub tab content
       #model-fitting    
       tabItem(tabName = "model-fitting",
               fluidRow(
@@ -394,7 +441,7 @@ ui <- dashboardPage(
               )
       ),   #end of item 3.2 - model-fitting  
       
-      #3.3 sub tab content
+      ########## 3.3 sub tab content
       #prediction    
       tabItem(tabName = "prediction",
               fluidRow(
@@ -406,7 +453,7 @@ ui <- dashboardPage(
               )
       ),   #end of item 3.3 - prediction                          
       
-      #4 tab content
+      ########## 4 tab content
       #data    
       tabItem(tabName = "data",
               fluidPage(sidebarPanel(width = 2, 
@@ -415,26 +462,24 @@ ui <- dashboardPage(
                                                         choices = colnames(cosmetics), 
                                                         selected = setdiff(colnames(cosmetics),
                                                                            "Ingredients") ) , 
-                                     downloadButton("data_download", "Download Data") ), 
+                                     numericInput("numRows",
+                                                  "Number of Rows to Filter On:",
+                                                  value =  5, min = 1, max = 1472),
+                                     downloadButton("data_download", "Download Data (.csv)") ), 
                         mainPanel( width = 10, 
                                    DTOutput("data_table") ),
               ), #end of fluidPage() function
       ) #end of item 4 - data 
       
       
-      
-      
-      
-      
-      
-      
-      
-      
-      
+
       
     ) #end of tabItems() function
   ) #end of dashboardBody() function
 ) # end of the dashboardPage() function
+  
+  
+  
 
 ####################################### SERVER ################################################
   
@@ -658,7 +703,9 @@ server <- shinyServer(function(input, output, session) {
   
   #data download
   #created reactive data
-  d <- reactive( {cosmetics %>%
+  d <- reactive( {cosmetics %>% 
+      select(all_of(input$display_vars)) %>%
+      slice(1:input$numRows) %>%
       as_tibble ( ) %>% 
       `[`( input$display_vars )
   } )
@@ -671,7 +718,6 @@ server <- shinyServer(function(input, output, session) {
   
   #downloading the data
   output$data_download <- downloadHandler( filename = function() { paste0( "cosmetics_", Sys.Date(), ".csv" ) }, content = function(file) { if(length(input$data_table_rows_selected) == 0) {write.csv(d(), file, row.names = FALSE) }else { write.csv( d()[input$data_table_rows_selected, ], file, row.names = FALSE ) } })
-  
   
   
 }) # end of the server function 
