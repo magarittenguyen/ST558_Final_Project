@@ -1,6 +1,6 @@
 ST558 Final Project
 ================
-Magaritte Nguyen   
+Magaritte Nguyen 
 2022-12-02
 
 <!-- In the repo’s README.md file (which doesn’t need to be created from a .Rmd file, just use the one you initialize into the repo if you want) give a brief description of the purpose of the repo, a list of R packages used, links to the generated analyses, and the code used to create the analyses from a single .Rmd file (i.e. the render() code). -->
