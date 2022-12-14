@@ -417,8 +417,49 @@ ui <- dashboardPage(
       #modeling-info    
       tabItem(tabName = "modeling-info",
               fluidPage(
-                column(width=3,
-                       box(width=12,background="blue",sliderInput("yvalue","Y=Number of Modeling Info",min = 0,max = 30,value = 15)
+                #do this 3x
+                #You should explain:
+                #these three modeling approaches, 
+                #the benefits of each, 
+                #the drawbacks of each. 
+                #You should include some type of math type in the explanation (you’ll need to include mathJax).
+                #MLR
+                h3("Multiple Linear Regression"),
+                column(width=4,
+                       box(width=12,background="blue",
+                           
+                           h4("MLR seem to have text here...")
+                           
+                       )
+                ),
+                
+                #RT
+                h3("Regression Tree"),
+                column(width=4,
+                       box(width=12,background="blue",
+                           
+                           h4("RT seem to have text here..."),
+                           h4("# Regression trees are used when the dependent variable is continuous whereas the classification tree is used when the dependent variable is categorical.")
+                           
+                       )
+                ),
+                
+                #RF
+                h3("Random Forrest"),
+                column(width=4,
+                       box(width=12,background="blue",
+                           
+                           h4("RF seem to have text here..."),
+                           h4("The idea behind the random forest model is the same as bagging, but we use a random subset of predictors for each bootstrap sample tree fit (indicated by 'mtry''). "),
+                           
+                           h4("More specifically, it involves: "),
+                           br(),
+                           h4("  - creating a boothstrap sample (same size with replacement)"),
+                           h4("  - training the tree on this sample (no pruning necessary)"),
+                           h4("  - repeating the process a large number of times and the final prediction is the average of those predictions"),
+                           br(),
+                           h4("Finding the average of predictions decreases variance, which improves predictions, but unfortunately we lose interpretability.")
+                           
                        )
                 ),
                 
@@ -429,22 +470,23 @@ ui <- dashboardPage(
       #model-fitting    
       tabItem(tabName = "model-fitting",
               fluidPage(
-                column(width=3,
+                column(width=12,
+                       
                        box(width=12,background="blue",
-                           
-                           h4("Partition of Train and Test Dataset, Respectively"),
-                           
                            #set seed
                            numericInput(inputId = "setseed",
                                         label = "Set Seed for Reproducibility",
                                         value =  123, 
                                         min = 1, 
-                                        max = 1000),
+                                        max = 1000)
                            
+                       ),
+                       
+                        box(width=12,background="blue",
                            # You’ll split your data into a training and test set. 
                            #Give the user the ability to choose the proportion of data used in each
                            sliderInput(inputId = "partition",
-                                       label = "Partition of Train and Test Dataset",
+                                       label = "Partition of Train and Test Dataset, Respectively",
                                        min = 0.01,
                                        max = 0.99,
                                        value = 0.70), 
@@ -455,6 +497,20 @@ ui <- dashboardPage(
                              verbatimTextOutput("traintest_obs")
                            ) #end of mainPanel() function
                            
+                       ),
+                       
+                        box(width=12,background="blue",
+                           # numbers for model repeats
+                           sliderInput("cvnum",
+                                       "Number of CV",
+                                       min = 0,
+                                       max = 30,
+                                       value = 5),
+                           sliderInput("numrep",
+                                       "Number of Reps",
+                                       min = 0,
+                                       max = 30,
+                                       value = 3)
                        )
                 ),
                 
@@ -465,10 +521,19 @@ ui <- dashboardPage(
       #prediction    
       tabItem(tabName = "prediction",
               fluidPage(
-                column(width=3,
-                       box(width=12,background="blue",sliderInput("yvalue","Y=Number of Prediction",min = 0,max = 30,value = 15)
-                       )
-                ),
+
+                br(),
+                h4("RMSE is a metric that tells us how far apart the predicted values are from the observed values in a dataset, on average. The lower the RMSE, the better a model fits a dataset."),
+                br(),
+                h4("As for the R^2 value we have (R-squared), this is a metric that indicates the proportion of the variance in the response variable of a regression model that can be explained by the predictor variables. The higher the R^2 value, the better a model fits a dataset. This value ranges from 0 to 1."),
+                br(),
+                h4("It should be noted that our best model is selected from a model that has results reflecting the lowest RMSE and the highest R^2 value. But, there are times when the results from the lowest RMSE and highest R^2 are not from the same model; therefore, we will use RMSE to pick our final winner."),  
+                
+                #outputting scatter plots - subset by type of product
+                mainPanel(
+                  #output text 
+                  verbatimTextOutput("predicting") #not showing up bc data not working and need input$xxx and need TrainTest()$xxx
+                ) #end of mainPanel() function    
                 
               )
       ),   #end of item 3.3 - prediction                          
@@ -749,6 +814,7 @@ server <- shinyServer(function(input, output, session) {
     
     numsout <- sapply(TrainTest(), nrow )
     
+    #try to output numbers with labesl...
     # numsout_tib <- as_tibble(numsout) 
     # 
     # test <-  numsout_tib %>%
@@ -765,6 +831,134 @@ server <- shinyServer(function(input, output, session) {
     
   })
   
+  ######################  MODELING  ########################
+  
+  #[[[ multiple linear regression ]]] 
+  #training
+  MLR_train <- reactive({
+    
+  #linear regression model 1
+  MLR <- train(Price  ~ Rank +  Label + sensitive_fctr + I(Rank^2) + Rank*sensitive_fctr,
+               data = TrainTest()$train, 
+               method = "lm",
+               preProcess = c("center", "scale"),
+               trControl = trainControl(method= "cv", number = input$cvnum))
+  
+  #calling the l_m1 object
+  MLR
+  
+  #summary statistics
+  summary(MLR)
+  
+  })
+  
+  
+  #[[[ regression tree ]]] 
+  #training
+  RT_train <- reactive({
+  #Basic Tree Fit - Notes 3 Slide 199
+  #rpart is also often used
+  
+  #factor predictors must have at most 32 levels
+  treeFit <- tree(Price ~ Rank + label_fctr + combination_fctr+ sensitive_fctr , data = TrainTest()$train)
+  plot(treeFit)
+  text(treeFit) #first optimal split is 4.85
+  
+  cvTree <- cv.tree(treeFit)
+  cvTree
+  
+  plot(cvTree$size ,cvTree$dev ,type="b")
+  
+  
+  # RT_train <- reactive({
+  #   
+  #   RT <- train(Price ~ ., data = TrainTest()$train,
+  #               method = "rpart",
+  #               preProcess = c("center", "scale"),
+  #               trControl = trainControl(method = "cv", number = 5)) #$input$cvnum
+  #   RT
+  #
+  # })
+  
+  #classification_tree_fit <- train(Price ~ Rank + label_fctr + combination_fctr+ sensitive_fctr, 
+  #                                 data = CosmeticsTrain, 
+  #                                 method = "rpart",
+  #                                 trControl=trctrl,
+  #                                 preProcess = c("center", "scale"),
+  #                                 tuneGrid = data.frame(cp=seq(0, 400, 10)) )
+    
+  })
+  
+  
+  #[[[ random forest model ]]
+  #training
+  RF_train <- reactive({
+    
+    #Random Forrest Model
+    RF <- train(Price ~ Rank +  Label + sensitive_fctr ,
+                data = TrainTest()$train, 
+                method = "rf",
+                trControl=trainControl(method = "cv", number = input$cvnum), 
+                preProcess = c("center", "scale"),
+                tuneGrid = data.frame(mtry = 1:3))
+    
+    #calling r_f object
+    RF
+    
+  })
+  
+  
+  #######################  PREDICTING #######################
+  
+  output$precidting <- reactive({
+  
+  #MLR
+  #predicting on the ChannelTest data with linear regression model 1
+  test_pred_MLR <- predict(MLR, newdata = TrainTest()$train) 
+  
+  #best model chosen - RMSE reported explicitly0.
+  #goal is to compare RMSE and see which one is the lowest!
+  m1 <- postResample(test_pred_MLR, TrainTest()$train$Price) 
+  #output object m1
+  m1
+  
+  
+  #RT
+  trctrl <- trainControl(method = "repeatedcv", number = input$cvnum, repeats = input$numrep)  
+  #Predictions using predict
+  pred <- predict(treeFit, newdata = dplyr::select(TrainTest()$train, -Price)) 
+  #Root MSE
+  TR_RMSE <- sqrt(mean((pred-TrainTest()$train$Price)^2)) 
+  TR_RMSEs
+  
+  #RF
+  #best model chosen - RMSE reported explicitly
+  #goal is to compare RMSE and see which one is the lowest!
+  test_pred_RF <- predict(RF, newdata = TrainTest()$train) 
+  m3 <- postResample(test_pred_RF, TrainTest()$train$Price) 
+  #calling m3 object
+  m3
+  
+  #Comparison
+  #creating tibble with RMSE and R-squared values
+  MLR <- tibble(model = c("Multiple Linear Regression"), RMSE = c(m1[[1]]), R2 = c(m1[[2]]))
+  
+  RT <- tibble(model = c("Regression Tree"), RMSE = c(TR_RMSE), R2 = NA )
+  
+  RF <- tibble(model = c("Random Forest"), RMSE = c(m3[[1]]), R2 = c(m3[[2]]))
+  
+  #creating tibble for all results for the 4 models
+  RMSE_table <- rbind(MLR, RT, RF)
+  RMSE_table
+  
+  
+  #pick the smallest RMSE for the best model
+  final_result <- RMSE_table %>%
+    filter ( min(RMSE) == RMSE )
+  
+  final_result
+  
+  })
   
   
   ########### Data  

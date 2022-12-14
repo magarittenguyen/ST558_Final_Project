@@ -348,6 +348,10 @@ MLR <- train(Price  ~ Rank +  Label + sensitive_fctr + I(Rank^2) + Rank*sensitiv
 #calling the l_m1 object
 MLR
 
+
+
+
+
 #summary statistics
 summary(MLR)
 
@@ -382,6 +386,7 @@ text(treeFit) #first optimal split is 4.85
 cvTree <- cv.tree(treeFit)
 cvTree
 
+
 plot(cvTree$size ,cvTree$dev ,type="b")
 
 
@@ -390,7 +395,7 @@ trctrl <- trainControl(method = "repeatedcv", number = 5, repeats = 3)
 pred <- predict(treeFit, newdata = dplyr::select(CosmeticsTest, -Price))
 #Root MSE
 TR_RMSE <- sqrt(mean((pred-CosmeticsTest$Price)^2))
-
+TR_RMSEs
 
 #set.seed(3333)
 
