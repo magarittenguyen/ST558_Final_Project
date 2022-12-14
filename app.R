@@ -408,19 +408,15 @@ ui <- dashboardPage(
       ########## Third tab content
       #modeling -- IS THERE SUPPOSED TO BE SOMETHING ON THIS PAGE?!?!?!
       tabItem(tabName = "modeling",
-              fluidRow(
-                column(width=3,
-                       box(width=12,background="blue",sliderInput("yvalue","Y=Number of Modeling",min = 0,max = 30,value = 15)
-                       )
-                ),
-                
+              fluidPage(
+                h4("testing...doesn't seem to have text here...")
               )
       ),  # end of item 3 - modeling  
       
       ########## 3.1 sub tab content
       #modeling-info    
       tabItem(tabName = "modeling-info",
-              fluidRow(
+              fluidPage(
                 column(width=3,
                        box(width=12,background="blue",sliderInput("yvalue","Y=Number of Modeling Info",min = 0,max = 30,value = 15)
                        )
@@ -432,9 +428,33 @@ ui <- dashboardPage(
       ########## 3.2 sub tab content
       #model-fitting    
       tabItem(tabName = "model-fitting",
-              fluidRow(
+              fluidPage(
                 column(width=3,
-                       box(width=12,background="blue",sliderInput("yvalue","Y=Number of Model Fitting",min = 0,max = 30,value = 15)
+                       box(width=12,background="blue",
+                           
+                           h4("Partition of Train and Test Dataset, Respectively"),
+                           
+                           #set seed
+                           numericInput(inputId = "setseed",
+                                        label = "Set Seed for Reproducibility",
+                                        value =  123, 
+                                        min = 1, 
+                                        max = 1000),
+                           
+                           # You’ll split your data into a training and test set. 
+                           #Give the user the ability to choose the proportion of data used in each
+                           sliderInput(inputId = "partition",
+                                       label = "Partition of Train and Test Dataset",
+                                       min = 0.01,
+                                       max = 0.99,
+                                       value = 0.70), 
+                           
+                           #outputting scatter plots - subset by type of product
+                           mainPanel(
+                             #output text 
+                             verbatimTextOutput("traintest_obs")
+                           ) #end of mainPanel() function
+                           
                        )
                 ),
                 
@@ -444,7 +464,7 @@ ui <- dashboardPage(
       ########## 3.3 sub tab content
       #prediction    
       tabItem(tabName = "prediction",
-              fluidRow(
+              fluidPage(
                 column(width=3,
                        box(width=12,background="blue",sliderInput("yvalue","Y=Number of Prediction",min = 0,max = 30,value = 15)
                        )
@@ -452,6 +472,7 @@ ui <- dashboardPage(
                 
               )
       ),   #end of item 3.3 - prediction                          
+      
       
       ########## 4 tab content
       #data    
@@ -465,7 +486,9 @@ ui <- dashboardPage(
                                      numericInput("numRows",
                                                   "Number of Rows to Filter On:",
                                                   value =  5, min = 1, max = 1472),
-                                     downloadButton("data_download", "Download Data") ), 
+                                     
+                                     downloadButton("data_download", "Download Data") ),
+                        
                         mainPanel( width = 10, 
                                    DTOutput("data_table") ),
               ), #end of fluidPage() function
@@ -705,10 +728,40 @@ server <- shinyServer(function(input, output, session) {
   ########## Modeling 
   
   #Train and Test Data
-  output$TrainTest <- renderText({
+  TrainTest <- reactive({
     
-    sum(str_detect(string=toupper(cosmetics$Ingredients), pattern = input$find_ingredient, 
-                   negate=input$TF_ingredient_exclude ))
+    # splitting into train and test data  
+    #seed is set for reproducibility 
+    set.seed(input$setseed)
+    
+    #indices to split on
+    CosmeticsIndex <- createDataPartition(cosmetics$Price, p = input$partition, list = FALSE)
+    
+    #subset
+    CosmeticsTrain <- cosmetics[ CosmeticsIndex, ]
+    CosmeticsTest  <- cosmetics[-CosmeticsIndex, ]
+    
+    list(train = CosmeticsTrain , test = CosmeticsTest )
+    
+  })
+  
+  output$traintest_obs <- renderText({
+    
+    numsout <- sapply(TrainTest(), nrow )
+    
+    # numsout_tib <- as_tibble(numsout) 
+    # 
+    # test <-  numsout_tib %>%
+    #            mutate(count1 = paste0( "Train = ", numsout_tib$value[1]),
+    #                   count2 = paste0( "Test = " , numsout_tib$value[2]) )
+    # 
+    # final <- test[1,] %>%
+    #   select(count1, count2)
+    # 
+    # final
+
+    #names(numsout) <- c("Train", "Test")
+    #numsout
     
   })
   
