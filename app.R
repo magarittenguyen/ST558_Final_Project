@@ -107,7 +107,10 @@ ui <- dashboardPage(
     #many tab items...
     tabItems(
       ########## First tab content -  An About page.
-      tabItem(tabName = "about", 
+      tabItem(tabName = "about",
+              
+              fluidRow(
+                box(background="purple",width=12,
               
               h4(
                 "This app uses the",
@@ -117,7 +120,9 @@ ui <- dashboardPage(
                 a(href = "https://www.kaggle.com", "Kaggle.com"),
                 "by the user",
                 a(href = "https://www.kaggle.com/kingabzpro", "Abid Ali Awan", .noWS = "after"),
-                "."
+                "." ) 
+              )
+              
               ),
               
               br(), 
@@ -134,16 +139,20 @@ ui <- dashboardPage(
                 #img(src='huda beauty product spread.png', align = "right")),
               ),
               
+              br(), br(),
+              
               fluidRow(
                 #add in latex functionality if needed
                 withMathJax(),
                 
                 #two columns for each of the two items
                 column(6,
-                       # Describe the purpose of the app
-                       h1("Purpose of The App"),
                        #box to contain description
                        box(background="purple",width=12,
+                           
+                           # Describe the purpose of the app
+                           h1("Purpose of The App"),
+                           br(),
                            
                            h4("This app is meant to predict the price of a product based on certian factor specified by the user. The reason for this is because when chosing a new cosmeic product to try can be very daunting. Not only are you gambling on something that might cost you a lot of money and it might not work, but you might also be taking a chance on your complection being ruined due to an allergic reaction or buying a product that is not compatible with your skin type. This app will aid in the selection of a product that will fit your budget, or atleast let you know how much you should expect to spend, with all the specs you're looking for."),
                            
@@ -173,10 +182,11 @@ ui <- dashboardPage(
                 ), #end of column() function -- line 61
                 
                 column(6,
-                       #Data Details
-                       h1("About The Data"),
                        #box to contain description
                        box(background="purple",width=12,
+                           #Data Details
+                           h1("About The Data"),
+                           br(), 
                            h4("This app uses data from a website called Kaggle, which is described as 'Your Machine Learning and Data Science Community'. It offers a no-setup, customizable, Jupyter Notebooks environment and access GPUs at no cost to you and a huge repository of community published data. For our purposes, I downloaded a data set called *cosmetics.csv*, which can be found", a(href = "https://www.kaggle.com/datasets/kingabzpro/cosmetics-datasets", "here"), " -- on the top right corner. This data set includes data from", a(href = "https://en.wikipedia.org/wiki/Sephora", "Sephora"), " and contains variables such as the type of cosmetic category, brand, product name, an ingredients list, rating, price, and the category of skin that these products are meant for (combinaiton, dry, normal, oily, sensitive)."),
                            
                            br(), #break
@@ -209,7 +219,7 @@ ui <- dashboardPage(
                 # Summary of Cosmetic Data Set Variables
                 h2("Summary of Cosmetic Data Set Variables"),
                 #also var i created in the data available
-                box(width=12,background="blue",
+                box(width=12,background="green",
                     selectizeInput(inputId="summary_select", 
                                    label="Summary of Cosmetic Data Set Variables",
                                    selected = "Price", #default value
@@ -231,7 +241,7 @@ ui <- dashboardPage(
                 # Serach Product by Ingredient
                 h2("Serach Product by Ingredient"),
                 #text finding in ingredients for products
-                box(width=12, background="blue", 
+                box(width=12, background="green", 
                     textInput(inputId="find_ingredient", 
                               label="Serach Product by Ingredient",
                               value = "SUL(F|PH)(UR|ATE|A)"),
@@ -258,7 +268,7 @@ ui <- dashboardPage(
               fluidRow( column(width=6 , #12 width is the max
                                # Contingency Table
                                h2("Contingency Table"),
-                               box(width = 12, background = "blue", 
+                               box(width = 12, background = "green", 
                                    #row var
                                    selectizeInput(inputId="contingency_table_row", 
                                                   label="Select Row Variable",
@@ -410,7 +420,7 @@ ui <- dashboardPage(
       tabItem(tabName = "modeling",
               fluidPage(
                 h4("testing...doesn't seem to have text here...")
-              )
+              ),
       ),  # end of item 3 - modeling  
       
       ########## 3.1 sub tab content
@@ -422,43 +432,119 @@ ui <- dashboardPage(
                 #these three modeling approaches, 
                 #the benefits of each, 
                 #the drawbacks of each. 
-                #You should include some type of math type in the explanation (you’ll need to include mathJax).
-                #MLR
-                h3("Multiple Linear Regression"),
+                #You should include some type of math type in the explanation (you’ll need to include mathJax)
+                
+                box(background="blue",width=12,
+                h4("This subsection tab/page has information on the three modeling approaches -- (i) multiple linear regression, (ii) regression tree, and (iii) random forest -- as well as benefits and drawbacks of each model used in this Cosmetics App.")
+                ),
+                
+                br(), 
+                
+                ########## MLR
                 column(width=4,
                        box(width=12,background="blue",
+                           h3(strong("Multiple Linear Regression")),
+                           br(), 
+                           h4("Multiple Linear Regression is a supervised learning statistical method that is an extention of the Simple Linear Regression Model and is used to examine the relationship between varibles and predict (Yi/response/dependent) the outcome of a variable based on the value of two or more (Xi/explanitory/indepentent) variables. This is done by minimizing the sum of squared residuals. The MLR can also include higher order terms. The easy interpretability of the linear model makes it widely used in the field of Statistics and Data Analysis."),
                            
-                           h4("MLR seem to have text here...")
+                              br(),
+                           
+                              h4("Simple Linear Regression Formula:"),
+                              
+                              br(),
+                           
+                              h4(HTML("Yi = β0 + β1xi + Ei"), 
+                              style="text-align:center"),
+                              
+                              br(),
+                           
+                              h4("Minimizing The Sum of Squares:"),
+                              
+                              br(),
+                              
+                              h4(HTML("min [ SUM (yi - β0 + β1xi)^2 ]"), # <b>Description</b>
+                              style="text-align:center"),
+                              
+                              br(),
+                              
+h4("NOTE:",
+br(),
+" - Yi is the response variable for the i_th obervation",
+br(),
+" - Xi is the explanitory variable for the i_th obervation",
+br(),
+" - β1 is the y-intercept",
+br(),
+" - β0 is the slope", 
+br(),
+" - Ei is the error term",
+                              
+                           br(),br(),
+), 
+                           ########## MLR PROS
+                           h4("PROS:", 
+                              
+                              br(), 
+                              " >> The simplest equation used, which the relationship between the multiple predictor variables and predicted variable can be expressed.", 
+                              br(),
+                              " >> The modeling speed is efficient because it does not require complicated calculations and runs predictions fast when the amount of data is large; hence, it works well on any size data set.",
+                              br(), 
+                              " >> The ability interpret the output and to determine the relative influence of one or more explanitory variables to the response variable",
+                              br(), 
+                              " >> The ability to identify outliers or anomalies"),
+
+                           br(), 
+                           ########## MLR CONS
+                           h4("CONS:", 
+                              
+                              br(),
+                              " >> Often times complex data sets can lead to false conclusions if they aren't analyzed properly due to being too simplistic of a model to capture real world complexity." , 
+                              br(),
+                              " >> The output can be severly affected by outliers due to the line of best fit trying to minimize the MSE, resulting in a model that might not be able to capture the information inthe data",
+                              br(),
+                              " >> Assumes independence of variables -- that the predictor variables are not correlated which is rarely true",
+                              br(),
+                              " >> Falsely concludes that a correlation is causation", 
+                              br(),
+                              " >> The model assumes homoskedacity, which assumes a constant variance around the mean and this is unrealistic in most cases"),
+                              br(),
+                       )
+                ),
+                
+                ########## RT
+                column(width=4,
+                       box(width=12,background="blue",
+                           h3(strong("Regression Tree")),
+                           br(),
+                           
+                           
+                           
+                           br(), 
+                           ########## RT PROS
+                           h4("PROS", 
+                              ),
+                           br(), 
+                           ########### RT CONS
+                           h4("CONS", 
+                              )
                            
                        )
                 ),
                 
-                #RT
-                h3("Regression Tree"),
+                ########## RF
                 column(width=4,
                        box(width=12,background="blue",
-                           
-                           h4("RT seem to have text here..."),
-                           h4("# Regression trees are used when the dependent variable is continuous whereas the classification tree is used when the dependent variable is categorical.")
-                           
-                       )
-                ),
-                
-                #RF
-                h3("Random Forrest"),
-                column(width=4,
-                       box(width=12,background="blue",
-                           
-                           h4("RF seem to have text here..."),
-                           h4("The idea behind the random forest model is the same as bagging, but we use a random subset of predictors for each bootstrap sample tree fit (indicated by 'mtry''). "),
-                           
-                           h4("More specifically, it involves: "),
+                           h3(strong("Random Forest")),
                            br(),
-                           h4("  - creating a boothstrap sample (same size with replacement)"),
-                           h4("  - training the tree on this sample (no pruning necessary)"),
-                           h4("  - repeating the process a large number of times and the final prediction is the average of those predictions"),
-                           br(),
-                           h4("Finding the average of predictions decreases variance, which improves predictions, but unfortunately we lose interpretability.")
+                           ), 
+                           br(), 
+                           ########## RF PROS
+                           h4("PROS",
+                             ),
+                           br(), 
+                           ########## RF CONS
+                           h4("CONS", 
+                              ),
                            
                        )
                 ),
@@ -502,7 +588,7 @@ ui <- dashboardPage(
                         box(width=12,background="blue",
                            # numbers for model repeats
                            sliderInput("cvnum",
-                                       "Number of CV",
+                                       "Number for CV",
                                        min = 0,
                                        max = 30,
                                        value = 5),
@@ -523,16 +609,18 @@ ui <- dashboardPage(
               fluidPage(
 
                 br(),
+                box(background="orange",width=12,
                 h4("RMSE is a metric that tells us how far apart the predicted values are from the observed values in a dataset, on average. The lower the RMSE, the better a model fits a dataset."),
                 br(),
                 h4("As for the R^2 value we have (R-squared), this is a metric that indicates the proportion of the variance in the response variable of a regression model that can be explained by the predictor variables. The higher the R^2 value, the better a model fits a dataset. This value ranges from 0 to 1."),
                 br(),
-                h4("It should be noted that our best model is selected from a model that has results reflecting the lowest RMSE and the highest R^2 value. But, there are times when the results from the lowest RMSE and highest R^2 are not from the same model; therefore, we will use RMSE to pick our final winner."),  
+                h4("It should be noted that our best model is selected from a model that has results reflecting the lowest RMSE and the highest R^2 value. But, there are times when the results from the lowest RMSE and highest R^2 are not from the same model; therefore, we will use RMSE to pick our final winner.")
+                ),  
                 
                 #outputting scatter plots - subset by type of product
                 mainPanel(
                   #output text 
-                  verbatimTextOutput("predicting") #not showing up bc data not working and need input$xxx and need TrainTest()$xxx
+                  #verbatimTextOutput("predicting") #not showing up bc data not working and need input$xxx and need TrainTest()$xxx
                 ) #end of mainPanel() function    
                 
               )
@@ -894,7 +982,7 @@ server <- shinyServer(function(input, output, session) {
   #training
   RF_train <- reactive({
     
-    #Random Forrest Model
+    #Random Forest Model
     RF <- train(Price ~ Rank +  Label + sensitive_fctr ,
                 data = TrainTest()$train, 
                 method = "rf",
@@ -910,15 +998,15 @@ server <- shinyServer(function(input, output, session) {
   
   #######################  PREDICTING #######################
   
-  output$precidting <- reactive({
+  output$predicting <- reactive({
   
   #MLR
   #predicting on the ChannelTest data with linear regression model 1
-  test_pred_MLR <- predict(MLR, newdata = TrainTest()$train) 
+  test_pred_MLR <- predict(MLR_train(), newdata = TrainTest()$test) 
   
   #best model chosen - RMSE reported explicitly0.
   #goal is to compare RMSE and see which one is the lowest!
-  m1 <- postResample(test_pred_MLR, TrainTest()$train$Price) 
+  m1 <- postResample(test_pred_MLR, TrainTest()$test$Price) 
   #output object m1
   m1
   
@@ -926,7 +1014,7 @@ server <- shinyServer(function(input, output, session) {
   #RT
   trctrl <- trainControl(method = "repeatedcv", number = input$cvnum, repeats = input$numrep)  
   #Predictions using predict
-  pred <- predict(treeFit, newdata = dplyr::select(TrainTest()$train, -Price)) 
+  pred <- predict(RT_train(), newdata = dplyr::select(TrainTest()$test, -Price)) 
   #Root MSE
   TR_RMSE <- sqrt(mean((pred-TrainTest()$train$Price)^2)) 
   TR_RMSEs
@@ -934,8 +1022,8 @@ server <- shinyServer(function(input, output, session) {
   #RF
   #best model chosen - RMSE reported explicitly
   #goal is to compare RMSE and see which one is the lowest!
-  test_pred_RF <- predict(RF, newdata = TrainTest()$train) 
-  m3 <- postResample(test_pred_RF, TrainTest()$train$Price) 
+  test_pred_RF <- predict(RF_train(), newdata = TrainTest()$test) 
+  m3 <- postResample(test_pred_RF, TrainTest()$test$Price) 
   #calling m3 object
   m3
   
