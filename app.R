@@ -516,17 +516,19 @@ br(),
                        box(width=12,background="blue",
                            h3(strong("Regression Tree")),
                            br(),
-                           
+                           h4("a statistical technique"), 
                            
                            
                            br(), 
                            ########## RT PROS
                            h4("PROS", 
-                              ),
+                              br(), 
+                              " models."),
                            br(), 
                            ########### RT CONS
                            h4("CONS", 
-                              )
+                              br(), 
+                              "Some model.")
                            
                        )
                 ),
@@ -536,15 +538,25 @@ br(),
                        box(width=12,background="blue",
                            h3(strong("Random Forest")),
                            br(),
-                           ), 
+                           h4("a statistical technique "),
+                           br(),
+                           h4("The idea behind the random forest model is "),
+                           
+                           h4("More specifically, it involves: "),
+                           br(),
+                          
+                           br(),
+                          
                            br(), 
                            ########## RF PROS
                            h4("PROS",
-                             ),
+                              br(),
+                              "Some models."),
                            br(), 
                            ########## RF CONS
                            h4("CONS", 
-                              ),
+                              br(), 
+                              "Some  examples."),
                            
                        )
                 ),
