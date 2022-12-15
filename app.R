@@ -444,6 +444,7 @@ ui <- dashboardPage(
                 column(width=4,
                        box(width=12,background="blue",
                            h3(strong("Multiple Linear Regression")),
+                           
                            br(), 
                            h4("Multiple Linear Regression is a supervised learning statistical method that is an extention of the Simple Linear Regression Model and is used to examine the relationship between varibles and predict (Yi/response/dependent) the outcome of a variable based on the value of two or more (Xi/explanitory/indepentent) variables. This is done by minimizing the sum of squared residuals. The MLR can also include higher order terms. The easy interpretability of the linear model makes it widely used in the field of Statistics and Data Analysis."),
                            
@@ -515,48 +516,60 @@ br(),
                 column(width=4,
                        box(width=12,background="blue",
                            h3(strong("Regression Tree")),
+                           
                            br(),
-                           h4("a statistical technique"), 
-                           
-                           
+                           h4("A Regression Tree, a variant of decision trees, is a statistical technique thats goal is to predict a continuous response for a given distinct and non-overlapping region (predictor space), which usually uses the mean of observations as the prediction.", 
+                           br(), br(),
+                           "A tree is built by splitting the source set. Once that split is chosen, the same process is used to create the second split and so on. Generally this method grows a 'large' tree (many nodes). These trees are then usually pruned back using cost-complexity pruning. This helps with not overfitting the data. Although, pruning back increases bias, it decreases the variance; therefore, hopefully, improving prediciton. Generally, we can choose the number of nodes using the training/test set and compare or use a method like cross-validation to predict.",
+                           br(), br(),
+                           "Regression trees are used when the dependent variable is continuous whereas the classification tree is used when the dependent variable is categorical. Random Forests is one method that average across trees. It loseses interpetability, but gains in prediction!" 
+                              ), 
+
                            br(), 
                            ########## RT PROS
-                           h4("PROS", 
+                           h4("PROS:", 
+                              
                               br(), 
-                              " models."),
+                              " >> Simple to understand and very interpretable output -- easy to interpret, understand, and visualize ",
+                              br(),
+                              " >> Predictors don't need to be scaled", 
+                              br(),
+                              " >> Data preparation during pre-processing in a decision tree requires less effort and does not require normalization of data",
+                              br(),
+                              " >> No statistical assumptions necessary",
+                              br(),
+                              " >> Built in variable selection",
+                              br(),
+                              " >> Not largely influenced by outliers or missing values",
+                              br(),
+                              " >> Quick ways to identify relationships between variables and the most significant variable",
+
+                           ),
+
                            br(), 
                            ########### RT CONS
-                           h4("CONS", 
+                           h4("CONS:", 
+                              
                               br(), 
-                              "Some model.")
-                           
+                              " >> Small changes in data can vastly change tree structure, which causes instability",
+                              br(),
+                              " >> Greedy algorithm necessary (no optimal algorithm)",
+                              br(),
+                              " >> Need to prune (usually)",
+                              br(),
+                              " >> Smaller data sets provide poorer results due to the high variance single regression trees have; thus, poor/unstable predictive accuracy",
+                              br(),
+                              " >> Overfitting can easily occur (issue can be resolved by pruning and setting constraints on the model parameters)",
+                              br(),
+                              " >> Relatively expensive in comparison to other algorithms because the calculations involved can become complex and take longer to train the model", 
+                              )
                        )
                 ),
                 
                 ########## RF
                 column(width=4,
                        box(width=12,background="blue",
-                           h3(strong("Random Forest")),
-                           br(),
-                           h4("a statistical technique "),
-                           br(),
-                           h4("The idea behind the random forest model is "),
-                           
-                           h4("More specifically, it involves: "),
-                           br(),
-                          
-                           br(),
-                          
-                           br(), 
-                           ########## RF PROS
-                           h4("PROS",
-                              br(),
-                              "Some models."),
-                           br(), 
-                           ########## RF CONS
-                           h4("CONS", 
-                              br(), 
-                              "Some  examples."),
+                           h3(strong("Random Forest"))
                            
                        )
                 ),
