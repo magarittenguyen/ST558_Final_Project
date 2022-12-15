@@ -517,8 +517,8 @@ br(),
                        box(width=12,background="blue",
                            h3(strong("Regression Tree")),
                            
-                           br(),
-                           h4("A Regression Tree, a variant of decision trees, is a statistical technique thats goal is to predict a continuous response for a given distinct and non-overlapping region (predictor space), which usually uses the mean of observations as the prediction.", 
+                           br(), 
+                           h4("A Regression Tree, a variant of decision trees, is a statistical method thats goal is to predict a continuous response for a given distinct and non-overlapping region (predictor space), which usually uses the mean of observations as the prediction.", 
                            br(), br(),
                            "A tree is built by splitting the source set. Once that split is chosen, the same process is used to create the second split and so on. Generally this method grows a 'large' tree (many nodes). These trees are then usually pruned back using cost-complexity pruning. This helps with not overfitting the data. Although, pruning back increases bias, it decreases the variance; therefore, hopefully, improving prediciton. Generally, we can choose the number of nodes using the training/test set and compare or use a method like cross-validation to predict.",
                            br(), br(),
@@ -569,7 +569,58 @@ br(),
                 ########## RF
                 column(width=4,
                        box(width=12,background="blue",
-                           h3(strong("Random Forest"))
+                           h3(strong("Random Forest")),
+                           
+                           br(),
+                           h4("A Random Forest is a statistical ensemble method which combines the creation of multiple decision trees, from bootstrap samples, to reach a single averaged result. This is an extension of the bagging method to create an uncorrelated forest of decision trees and is generally more accurate than just bagging itself. Bagged trees are created using bootstrap aggregation.",
+                           br(), br(),
+                           "The randomn part of this model generates a random subset of predictors for each bootstrap sample/tree fit, which ensures low correlation among decision trees (so, a good predictor or two won't dominate the tree fits). The key difference between decision trees and random forests is that, while decision trees consider all the possible feature splits, random forests only select a subset of those features. The reason why this is done is because if there is a situation where a really strong predictor exists, every bootstrap tree will probably use it for the first split. This makes the bagged trees predictions more correlated.",
+                           br(), br(),
+                           "NOTE:",
+                           br(), 
+                           "The process of bagged trees / random forest treats the sample as if it is the population.", 
+                           br(), br(), 
+                           " - creating the bootstrap sample (same size with replacement)",
+                           br(),
+                           " - training the tree on this sample (no pruning necessary)",
+                           br(),
+                           " - repeating the process a large number of times (e.g. B = 1000 times)",
+                           br(),
+                           " - the final prediction is the average of all these predictions for the regression trees model", 
+                           
+                           br(),br(),
+
+"Finding the average of predictions decreases variance, which improves predictions, but unfortunately we lose interpretability."), 
+
+                              br(), 
+
+                           ########## RF PROS
+                           h4("PROS:",
+                              
+                              br(),
+                              " >> Provides flexibility because it can be used for both regression and classification tasks",
+                              br(),
+                              " >> Less susceptible to overfitting in decision trees than many other types of models and helps to improve the accuracy since the averaging of uncorrelated trees lowers the overall variance and prediction error",
+                              br(),
+                              " >> Easy to evaluate variable importance or contribution, to the model  ",
+                              br(),
+                              "  >> The trees created are not correlated", 
+                              br(),
+                              "  >> Not easily influenced by outliers or influential points",
+                              br(),
+                              "  >> The bias variance trade-off well is good"
+
+                                                            ),
+                           br(), 
+                           ########## RF CONS
+                           h4("CONS:", 
+                              
+                              br(), 
+                              "  >> By doing this method, it loses interpretability due to complexity",
+                              br(),
+                              "  >> Time-consuming process due to requiring much computational power for each individual decision tree and resources to store data",
+                              br(),
+                              " >> May not always perform as well as other types of models on very very large datasets" ),
                            
                        )
                 ),
